@@ -9,12 +9,12 @@ package org.addin.learns.bt01.ui;
  *
  * @author eroot
  */
-public class from_booking extends javax.swing.JFrame {
+public class FormBooking extends javax.swing.JFrame {
 
     /**
      * Creates new form from_booking
      */
-    public from_booking() {
+    public FormBooking() {
         initComponents();
     }
 

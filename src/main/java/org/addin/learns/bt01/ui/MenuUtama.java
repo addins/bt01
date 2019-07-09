@@ -137,14 +137,14 @@ public class MenuUtama extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        from_booking n = new from_booking();
+        FormBooking n = new FormBooking();
         n.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        from_regismember n = new from_regismember();
+        FormRegisterMember n = new FormRegisterMember();
         n.setVisible(true);
         this.setVisible(false);
         
@@ -152,14 +152,14 @@ public class MenuUtama extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        from_sewalapangan n = new from_sewalapangan();
+        FormSewaLapangan n = new FormSewaLapangan();
         n.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        from_laporan n = new from_laporan();
+        FormLaporan n = new FormLaporan();
         n.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton4ActionPerformed

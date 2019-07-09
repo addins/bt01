@@ -23,50 +23,50 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author eroot
  */
-public class from_regismember extends javax.swing.JFrame {
+public class FormRegisterMember extends javax.swing.JFrame {
 
     /**
      * Creates new form from_regismember
      */
-    public from_regismember() {
+    public FormRegisterMember() {
         initComponents();
-        datatable();
+//        datatable();
     }
-    
-    public void datatable(){
-        DefaultTableModel tbl=new DefaultTableModel();
-        tbl.addColumn("Kode Member");
-        tbl.addColumn("No KTP");
-        tbl.addColumn("Nama");
-        tbl.addColumn("Alamat");
-        tbl.addColumn("No Tlpn");
-        tbl.addColumn("Tgl Daftar");
-        tbl.addColumn("Tgl Habis");
-        tbl.addColumn("Bayar");
-        table.setModel(tbl);
-      
-        try{
-            
-            Statement statement=(Statement)conek.GetConnection().createStatement();
-            ResultSet res = statement.executeQuery("select * from imember");
-            ResultSetMetaData meta = res.getMetaData();
-            int numberOfColumns = meta.getColumnCount();
-            while(res.next())
-            {
-                Object [] rowData = new Object[numberOfColumns];
-                for (int i = 0; i < rowData.length; ++i)
-                {
-                    rowData[i] = res.getObject(i+1);
-                }
-                tbl.addRow(rowData);   
-            }
-            table.setModel(tbl);
-        }catch (Exception e){
-            JOptionPane.showMessageDialog(rootPane,"salah");
-            
-        }
-        
-    }
+//    
+//    public void datatable(){
+//        DefaultTableModel tbl=new DefaultTableModel();
+//        tbl.addColumn("Kode Member");
+//        tbl.addColumn("No KTP");
+//        tbl.addColumn("Nama");
+//        tbl.addColumn("Alamat");
+//        tbl.addColumn("No Tlpn");
+//        tbl.addColumn("Tgl Daftar");
+//        tbl.addColumn("Tgl Habis");
+//        tbl.addColumn("Bayar");
+//        table.setModel(tbl);
+//      
+//        try{
+//            
+//            Statement statement=(Statement)conek.GetConnection().createStatement();
+//            ResultSet res = statement.executeQuery("select * from imember");
+//            ResultSetMetaData meta = res.getMetaData();
+//            int numberOfColumns = meta.getColumnCount();
+//            while(res.next())
+//            {
+//                Object [] rowData = new Object[numberOfColumns];
+//                for (int i = 0; i < rowData.length; ++i)
+//                {
+//                    rowData[i] = res.getObject(i+1);
+//                }
+//                tbl.addRow(rowData);   
+//            }
+//            table.setModel(tbl);
+//        }catch (Exception e){
+//            JOptionPane.showMessageDialog(rootPane,"salah");
+//            
+//        }
+//        
+//    }
     
     public void clearForm(){
         tkodmem.setText("");
@@ -409,31 +409,31 @@ public class from_regismember extends javax.swing.JFrame {
 
     private void tsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsimpanActionPerformed
         // TODO add your handling code here:
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        String kodmember = tkodmem.getText();
-        String noktp = tnoktp.getText();
-        String nama = tnama.getText();
-        String alamat = talamat.getText();
-        String notlpn = tnotlpn.getText();
-        Date tgldaftar = ttgldaf.getDate();
-        Date tglhabis = ttglha.getDate();
-        String tglDaftarInString = formatter.format(tgldaftar);
-        String tglHabisInString = formatter.format(tglhabis);
-        String bayar = tbayar.getText();
-        String query = "INSERT INTO imember (kodmember, noktp, nama, alamat, notlpn, tgldaftar, tglhabis, bayar) " 
-            + "VALUES ('" + kodmember + "','" + noktp + "','" + nama + "','" + alamat + "', '" + notlpn + "', '" + tglDaftarInString + "', '" + tglHabisInString + "', '" + bayar + "')";
-        
-        try {
-                Statement statement= (Statement) conek.GetConnection().createStatement();
-                statement.executeUpdate(query);
-                statement.close();
-                clearForm();
-                JOptionPane.showMessageDialog(null,"Data Berhasil di Simpan");
-            } catch (Exception t){
-                t.printStackTrace();
-                JOptionPane.showMessageDialog(null,"Data gagal di Simpan");
-            }
-            datatable();
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+//        String kodmember = tkodmem.getText();
+//        String noktp = tnoktp.getText();
+//        String nama = tnama.getText();
+//        String alamat = talamat.getText();
+//        String notlpn = tnotlpn.getText();
+//        Date tgldaftar = ttgldaf.getDate();
+//        Date tglhabis = ttglha.getDate();
+//        String tglDaftarInString = formatter.format(tgldaftar);
+//        String tglHabisInString = formatter.format(tglhabis);
+//        String bayar = tbayar.getText();
+//        String query = "INSERT INTO imember (kodmember, noktp, nama, alamat, notlpn, tgldaftar, tglhabis, bayar) " 
+//            + "VALUES ('" + kodmember + "','" + noktp + "','" + nama + "','" + alamat + "', '" + notlpn + "', '" + tglDaftarInString + "', '" + tglHabisInString + "', '" + bayar + "')";
+//        
+//        try {
+//                Statement statement= (Statement) conek.GetConnection().createStatement();
+//                statement.executeUpdate(query);
+//                statement.close();
+//                clearForm();
+//                JOptionPane.showMessageDialog(null,"Data Berhasil di Simpan");
+//            } catch (Exception t){
+//                t.printStackTrace();
+//                JOptionPane.showMessageDialog(null,"Data gagal di Simpan");
+//            }
+//            datatable();
     }//GEN-LAST:event_tsimpanActionPerformed
 
     private void thapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thapusActionPerformed
@@ -457,21 +457,23 @@ public class from_regismember extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(from_regismember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(from_regismember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(from_regismember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(from_regismember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new from_regismember().setVisible(true);
+                new FormRegisterMember().setVisible(true);
             }
         });
     }
