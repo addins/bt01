@@ -5,6 +5,7 @@
  */
 package org.addin.learns.bt01.ui;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MenuUtama extends javax.swing.JFrame {
+    
+    @Autowired
+    private FormBooking formBooking;
+    
+    @Autowired
+    private FormRegisterMember formRegisterMember;
+    
+    @Autowired
+    private FormSewaLapangan formSewaLapangan;
+    
+    @Autowired
+    private FormLaporan formLaporan;
 
     /**
      * Creates new form menuutamaa
@@ -136,31 +149,23 @@ public class MenuUtama extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        FormBooking n = new FormBooking();
-        n.setVisible(true);
+        formBooking.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        FormRegisterMember n = new FormRegisterMember();
-        n.setVisible(true);
+        formRegisterMember.setVisible(true);
         this.setVisible(false);
         
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        FormSewaLapangan n = new FormSewaLapangan();
-        n.setVisible(true);
+        formSewaLapangan.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        FormLaporan n = new FormLaporan();
-        n.setVisible(true);
+        formLaporan.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton4ActionPerformed
 

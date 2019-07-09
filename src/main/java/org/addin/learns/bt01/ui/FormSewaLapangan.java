@@ -5,11 +5,18 @@
  */
 package org.addin.learns.bt01.ui;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 /**
  *
  * @author eroot
  */
+@Component
 public class FormSewaLapangan extends javax.swing.JFrame {
+    
+    @Autowired
+    private MenuUtama menuUtama;
 
     /**
      * Creates new form from_sewalapangan
@@ -330,9 +337,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        MenuUtama n = new MenuUtama();
-        n.setVisible(true);
+        menuUtama.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 

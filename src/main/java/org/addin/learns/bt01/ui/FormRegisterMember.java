@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -23,7 +25,11 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author eroot
  */
+@Component
 public class FormRegisterMember extends javax.swing.JFrame {
+    
+    @Autowired
+    private MenuUtama menuUtama;
 
     /**
      * Creates new form from_regismember
@@ -369,9 +375,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:    
-        MenuUtama n = new MenuUtama();
-        n.setVisible(true);
+        menuUtama.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
