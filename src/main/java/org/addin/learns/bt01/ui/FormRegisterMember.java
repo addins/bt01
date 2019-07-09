@@ -185,7 +185,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
             }
         });
 
-        ttambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bultang/print.png"))); // NOI18N
         ttambah.setText("Print");
         ttambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
