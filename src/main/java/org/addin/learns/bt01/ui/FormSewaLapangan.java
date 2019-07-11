@@ -5,6 +5,8 @@
  */
 package org.addin.learns.bt01.ui;
 
+import org.addin.learns.bt01.repository.BookingRepository;
+import org.addin.learns.bt01.repository.PembayaranRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     
     @Autowired
     private MenuUtama menuUtama;
+    
+    @Autowired
+    private BookingRepository bookingRepository;
+    
+    @Autowired
+    private PembayaranRepository pembayaranRepository;
 
     /**
      * Creates new form from_sewalapangan

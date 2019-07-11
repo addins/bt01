@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 /*
@@ -30,6 +31,9 @@ public class FormRegisterMember extends javax.swing.JFrame {
     
     @Autowired
     private MenuUtama menuUtama;
+    
+    @Autowired
+    private RegisMemberRepository memberRepository;
 
     /**
      * Creates new form from_regismember
