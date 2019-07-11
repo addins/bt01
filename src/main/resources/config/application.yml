@@ -9,3 +9,5 @@ spring:
         database-platform: org.hibernate.dialect.MySQL8Dialect
         database: MYSQL
         show-sql: true
+        hibernate:
+            ddl-auto: validate
