@@ -27,6 +27,7 @@ public class RegisMemberController {
     private RegisMemberRepository memberRepository;
     
     public static final String[] columnNames = new String[]{
+        "ID",
         "Kode Member",
         "No. KTP",
         "Nama",
@@ -51,5 +52,9 @@ public class RegisMemberController {
     
     public void delete(RegisMember member) {
         memberRepository.delete(member);
+    }
+
+    public void delete(Long id) {
+        memberRepository.deleteById(id);
     }
 }

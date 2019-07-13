@@ -21,7 +21,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -52,7 +57,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
     @Autowired
     private RegisMemberController memberController;
 
-    private RegisMember selectedMember;
+    private Long selectedMemberId;
 
     private boolean refreshing = false;
 
@@ -65,6 +70,23 @@ public class FormRegisterMember extends javax.swing.JFrame {
      */
     public FormRegisterMember() {
         initComponents();
+        addSelectionListenerForTable();
+    }
+
+    private void addSelectionListenerForTable() {
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                final TableModel tableModel = table.getModel();
+                if (selectedRow > -1 && tableModel.getRowCount() > 0) {
+                    selectedMemberId = (Long) tableModel.getValueAt(selectedRow, 0);
+                } else {
+                    selectedMemberId = null;
+                }
+            }
+        });
     }
 
     /**
@@ -94,15 +116,15 @@ public class FormRegisterMember extends javax.swing.JFrame {
         datcTglHabis = new com.toedter.calendar.JDateChooser();
         txtfBayar = new javax.swing.JTextField();
         btnSimpan = new javax.swing.JButton();
-        btnHapus = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         searchInput = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         btnKembali = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
+        btnEdit = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -144,21 +166,12 @@ public class FormRegisterMember extends javax.swing.JFrame {
             }
         });
 
-        btnHapus.setText("Hapus");
-        btnHapus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHapusActionPerformed(evt);
-            }
-        });
-
         btnPrint.setText("Print");
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPrintActionPerformed(evt);
             }
         });
-
-        btnEdit.setText("Edit");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -169,11 +182,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPrint)
-                .addGap(30, 30, 30)
-                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,30 +254,27 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnSimpan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36))
         );
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Kode Member", "No. KTP", "Nama", "Alamat", "No. Telp", "Tgl. Daftar", "Tgl. Habis", "Bayar"
+                "ID", "Kode Member", "No. KTP", "Nama", "Alamat", "No. Telp", "Tgl. Daftar", "Tgl. Habis", "Bayar"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Long.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -279,8 +285,13 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table.setShowGrid(true);
         jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setResizable(false);
+        }
 
         searchInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -299,6 +310,15 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
         jLabel10.setText("Data Member");
 
+        btnEdit.setText("Edit");
+
+        btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -310,7 +330,12 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnKembali)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnEdit)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnHapus)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnKembali))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 728, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(21, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -340,7 +365,11 @@ public class FormRegisterMember extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(55, 55, 55)
-                        .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(59, 59, 59))))
         );
 
@@ -362,20 +391,21 @@ public class FormRegisterMember extends javax.swing.JFrame {
         String nama = txtfNama.getText();
         String alamat = txtfAlamat.getText();
         String noTelp = txtfNoTelp.getText();
-        final Date tglDaftarDate = datcTglDaftar.getDate();
 
+        final Date tglDaftarDate = datcTglDaftar.getDate();
         ZonedDateTime tglDaftar = null;
         if (tglDaftarDate != null) {
             tglDaftar = ofInstant(tglDaftarDate.toInstant(), ZoneId.systemDefault());
         }
 
+        final Date tglHabisDate = datcTglHabis.getDate();
         ZonedDateTime tglHabis = null;
-        if (tglHabis != null) {
-            tglHabis = ofInstant(datcTglHabis.getDate().toInstant(), ZoneId.systemDefault());
+        if (tglHabisDate != null) {
+            tglHabis = ofInstant(tglHabisDate.toInstant(), ZoneId.systemDefault());
         }
 
         String bayar = txtfBayar.getText();
-        
+
         if (kode == null || kode.isEmpty()) {
             // kode should not be empty.
             return;
@@ -384,7 +414,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
         if (!saving) {
             saving = true;
             btnSimpan.setEnabled(false);
-            createMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
+            createAndSaveMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
             clearMemberForm();
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
@@ -401,7 +431,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     }
 
-    private void createMember(String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
+    private void createAndSaveMember(String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
         RegisMember member = new RegisMember()
                 .withKode(kode)
                 .withnoKtp(noKtp)
@@ -496,7 +526,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
                     case 0:
-                        return String.class;
+                        return Long.class;
                     case 1:
                         return String.class;
                     case 2:
@@ -510,6 +540,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     case 6:
                         return String.class;
                     case 7:
+                        return String.class;
+                    case 8:
                         return String.class;
                     default:
                         return String.class;
@@ -521,20 +553,26 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 RegisMember member = members.get(arg0);
                 switch (arg1) {
                     case 0:
-                        return member.getKode();
+                        return member.getId();
                     case 1:
-                        return member.getNoKtp();
+                        return member.getKode();
                     case 2:
-                        return member.getNama();
+                        return member.getNoKtp();
                     case 3:
-                        return member.getAlamat();
+                        return member.getNama();
                     case 4:
-                        return member.getNoTelp();
+                        return member.getAlamat();
                     case 5:
-                        return ofNullable(member.getTglDaftar()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                        return member.getNoTelp();
                     case 6:
-                        return ofNullable(member.getTglHabis()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                        return ofNullable(member.getTglDaftar())
+                                .map(d -> d.format(DateTimeFormatter.ISO_DATE))
+                                .orElse(null);
                     case 7:
+                        return ofNullable(member.getTglHabis())
+                                .map(d -> d.format(DateTimeFormatter.ISO_DATE))
+                                .orElse(null);
+                    case 8:
                         return member.getBayar();
                     default:
                         return "";
@@ -544,11 +582,13 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        if (selectedMember != null) {
-            memberController.delete(selectedMember);
-            refreshMemberList();
+        if (selectedMemberId != null) {
+            int confirmedResult = showConfirmDialog(rootPane, "Yakin hapus data terpilih?", "Hapus", JOptionPane.YES_NO_OPTION);
+            if (YES_OPTION == confirmedResult) {
+                memberController.delete(selectedMemberId);
+                refreshMemberList();
+            }
         }
-        clearMemberForm();
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
