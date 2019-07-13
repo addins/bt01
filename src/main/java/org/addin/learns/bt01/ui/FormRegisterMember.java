@@ -9,11 +9,28 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import static java.util.Optional.ofNullable;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.addin.learns.bt01.controller.RegisMemberController;
+import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -33,61 +50,15 @@ public class FormRegisterMember extends javax.swing.JFrame {
     private MenuUtama menuUtama;
     
     @Autowired
-    private RegisMemberRepository memberRepository;
-
+    private RegisMemberController memberController;
+    
+    private RegisMember selectedMember;
+    
     /**
      * Creates new form from_regismember
      */
     public FormRegisterMember() {
         initComponents();
-//        datatable();
-    }
-//    
-//    public void datatable(){
-//        DefaultTableModel tbl=new DefaultTableModel();
-//        tbl.addColumn("Kode Member");
-//        tbl.addColumn("No KTP");
-//        tbl.addColumn("Nama");
-//        tbl.addColumn("Alamat");
-//        tbl.addColumn("No Tlpn");
-//        tbl.addColumn("Tgl Daftar");
-//        tbl.addColumn("Tgl Habis");
-//        tbl.addColumn("Bayar");
-//        table.setModel(tbl);
-//      
-//        try{
-//            
-//            Statement statement=(Statement)conek.GetConnection().createStatement();
-//            ResultSet res = statement.executeQuery("select * from imember");
-//            ResultSetMetaData meta = res.getMetaData();
-//            int numberOfColumns = meta.getColumnCount();
-//            while(res.next())
-//            {
-//                Object [] rowData = new Object[numberOfColumns];
-//                for (int i = 0; i < rowData.length; ++i)
-//                {
-//                    rowData[i] = res.getObject(i+1);
-//                }
-//                tbl.addRow(rowData);   
-//            }
-//            table.setModel(tbl);
-//        }catch (Exception e){
-//            JOptionPane.showMessageDialog(rootPane,"salah");
-//            
-//        }
-//        
-//    }
-    
-    public void clearForm(){
-        tkodmem.setText("");
-        tnoktp.setText("");
-        tnama.setText("");
-        talamat.setText("");
-        tnotlpn.setText("");
-        tbayar.setText("");
-        ttgldaf.setCalendar(null);
-        ttglha.setCalendar(null);
-        
     }
 
     /**
@@ -104,30 +75,35 @@ public class FormRegisterMember extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        tkodmem = new javax.swing.JTextField();
+        txtfKode = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        tnoktp = new javax.swing.JTextField();
-        talamat = new javax.swing.JTextField();
-        tnama = new javax.swing.JTextField();
-        tnotlpn = new javax.swing.JTextField();
-        ttgldaf = new com.toedter.calendar.JDateChooser();
-        ttglha = new com.toedter.calendar.JDateChooser();
-        tbayar = new javax.swing.JTextField();
-        tsimpan = new javax.swing.JButton();
-        thapus = new javax.swing.JButton();
-        ttambah = new javax.swing.JButton();
-        tedit = new javax.swing.JButton();
+        txtfNoKtp = new javax.swing.JTextField();
+        txtfAlamat = new javax.swing.JTextField();
+        txtfNama = new javax.swing.JTextField();
+        txtfNoTelp = new javax.swing.JTextField();
+        datcTglDaftar = new com.toedter.calendar.JDateChooser();
+        datcTglHabis = new com.toedter.calendar.JDateChooser();
+        txtfBayar = new javax.swing.JTextField();
+        btnSimpan = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        jTextField7 = new javax.swing.JTextField();
+        searchInput = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
+        btnKembali = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Registrasi Member"));
 
@@ -143,12 +119,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel4.setText("Alamat");
 
-        tkodmem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tkodmemActionPerformed(evt);
-            }
-        });
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setText("No Telepon");
 
@@ -161,48 +131,28 @@ public class FormRegisterMember extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel8.setText("Bayar");
 
-        ttgldaf.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                ttgldafAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-
-        ttglha.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                ttglhaAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-
-        tsimpan.setText("Simpan");
-        tsimpan.addActionListener(new java.awt.event.ActionListener() {
+        btnSimpan.setText("Simpan");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tsimpanActionPerformed(evt);
+                btnSimpanActionPerformed(evt);
             }
         });
 
-        thapus.setText("Hapus");
-        thapus.addActionListener(new java.awt.event.ActionListener() {
+        btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                thapusActionPerformed(evt);
+                btnHapusActionPerformed(evt);
             }
         });
 
-        ttambah.setText("Print");
-        ttambah.addActionListener(new java.awt.event.ActionListener() {
+        btnPrint.setText("Print");
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ttambahActionPerformed(evt);
+                btnPrintActionPerformed(evt);
             }
         });
 
-        tedit.setText("Edit");
+        btnEdit.setText("Edit");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -210,13 +160,13 @@ public class FormRegisterMember extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tsimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ttambah)
+                .addComponent(btnPrint)
                 .addGap(30, 30, 30)
-                .addComponent(tedit, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(thapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
@@ -224,7 +174,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(ttglha, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(datcTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel8)
@@ -236,20 +186,20 @@ public class FormRegisterMember extends javax.swing.JFrame {
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(tbayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(tnotlpn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(txtfBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtfNoTelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addGap(45, 45, 45)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(ttgldaf, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(talamat, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addComponent(datcTglDaftar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtfAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(tkodmem, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(tnama, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(tnoktp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtfKode, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtfNama, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtfNoKtp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -257,74 +207,87 @@ public class FormRegisterMember extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tkodmem, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtfKode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tnoktp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtfNoKtp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(tnama, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtfNama, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(talamat, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtfAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tnotlpn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtfNoTelp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ttgldaf, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(datcTglDaftar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel7)
-                    .addComponent(ttglha, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(datcTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tbayar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtfBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(thapus, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(tedit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tsimpan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ttambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36))
         );
 
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Kode Member", "No. KTP", "Nama", "Alamat", "No. Telp", "Tgl. Daftar", "Tgl. Habis", "Bayar"
             }
-        ));
-        table.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                tableAncestorAdded(evt);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
             }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
+        table.setShowGrid(true);
         jScrollPane1.setViewportView(table);
+
+        searchInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchInputActionPerformed(evt);
+            }
+        });
 
         jLabel9.setText("Kode Member");
 
-        jButton6.setText("Kembali");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnKembali.setText("Kembali");
+        btnKembali.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnKembaliActionPerformed(evt);
             }
         });
 
@@ -341,7 +304,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton6)
+                            .addComponent(btnKembali)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 728, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(21, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -351,7 +314,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -366,127 +329,204 @@ public class FormRegisterMember extends javax.swing.JFrame {
                         .addComponent(jLabel10)
                         .addGap(21, 21, 21)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(55, 55, 55)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(59, 59, 59))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
         menuUtama.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btnKembaliActionPerformed
 
-    private void tkodmemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tkodmemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tkodmemActionPerformed
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        // TODO add your handling code here:        
+    }//GEN-LAST:event_btnPrintActionPerformed
 
-    private void tableAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tableAncestorAdded
-        // TODO add your handling code here:
-       
-    }//GEN-LAST:event_tableAncestorAdded
-
-    private void ttambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ttambahActionPerformed
-        // TODO add your handling code here:
-        tkodmem.setText("");
-        tnoktp.setText("");
-        tnama.setText("");
-        talamat.setText("");
-        ttgldaf.getDate();
-        ttglha.getDate();
-        tbayar.setText("");
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        String kode = txtfKode.getText();
+        String noKtp = txtfNoKtp.getText();
+        String nama = txtfNama.getText();
+        String alamat = txtfAlamat.getText();
+        String noTelp = txtfNoTelp.getText();
+        ZonedDateTime tglDaftar = ZonedDateTime.ofInstant(datcTglDaftar.getDate().toInstant(), ZoneId.systemDefault());
+        ZonedDateTime tglHabis = ZonedDateTime.ofInstant(datcTglHabis.getDate().toInstant(), ZoneId.systemDefault());
+        String bayar = txtfBayar.getText();
         
-    }//GEN-LAST:event_ttambahActionPerformed
+        createMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
+        clearMemberForm();
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
-    private void ttgldafAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_ttgldafAncestorAdded
-        // TODO add your handling code here:
+    public void clearMemberForm(){
+        txtfKode.setText("");
+        txtfNoKtp.setText("");
+        txtfNama.setText("");
+        txtfAlamat.setText("");
+        txtfNoTelp.setText("");
+        txtfBayar.setText("");
+        datcTglDaftar.setCalendar(null);
+        datcTglHabis.setCalendar(null);
         
-    }//GEN-LAST:event_ttgldafAncestorAdded
-
-    private void ttglhaAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_ttglhaAncestorAdded
-        // TODO add your handling code here:
+    }
+    
+    private void createMember(String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
+        RegisMember member = new RegisMember()
+                .withKode(kode)
+                .withnoKtp(noKtp)
+                .withnama(nama)
+                .withalamat(alamat)
+                .withNoTelp(noTelp)
+                .withTglDaftar(tglDaftar)
+                .withTglHabis(tglHabis)
+                .withBayar(bayar);
         
-    }//GEN-LAST:event_ttglhaAncestorAdded
-
-    private void tsimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsimpanActionPerformed
-        // TODO add your handling code here:
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-//        String kodmember = tkodmem.getText();
-//        String noktp = tnoktp.getText();
-//        String nama = tnama.getText();
-//        String alamat = talamat.getText();
-//        String notlpn = tnotlpn.getText();
-//        Date tgldaftar = ttgldaf.getDate();
-//        Date tglhabis = ttglha.getDate();
-//        String tglDaftarInString = formatter.format(tgldaftar);
-//        String tglHabisInString = formatter.format(tglhabis);
-//        String bayar = tbayar.getText();
-//        String query = "INSERT INTO imember (kodmember, noktp, nama, alamat, notlpn, tgldaftar, tglhabis, bayar) " 
-//            + "VALUES ('" + kodmember + "','" + noktp + "','" + nama + "','" + alamat + "', '" + notlpn + "', '" + tglDaftarInString + "', '" + tglHabisInString + "', '" + bayar + "')";
-//        
-//        try {
-//                Statement statement= (Statement) conek.GetConnection().createStatement();
-//                statement.executeUpdate(query);
-//                statement.close();
-//                clearForm();
-//                JOptionPane.showMessageDialog(null,"Data Berhasil di Simpan");
-//            } catch (Exception t){
-//                t.printStackTrace();
-//                JOptionPane.showMessageDialog(null,"Data gagal di Simpan");
-//            }
-//            datatable();
-    }//GEN-LAST:event_tsimpanActionPerformed
-
-    private void thapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thapusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_thapusActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+        SwingWorker<RegisMember,Void> worker = new SwingWorker<RegisMember, Void>() {
+            @Override
+            protected RegisMember doInBackground() throws Exception {
+                return memberController.save(member);
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormRegisterMember.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormRegisterMember().setVisible(true);
+            
+            @Override
+            protected void done() {
+                refreshMemberList();
             }
-        });
+        };
+        
+        worker.execute();
     }
 
+    private void refreshMemberList() {
+        SwingWorker<Page<RegisMember>,Void> worker;
+        worker = new SwingWorker<Page<RegisMember>, Void>() {
+            @Override
+            protected Page<RegisMember> doInBackground() throws Exception {
+                return memberController.findAllMember(Pageable.unpaged());
+            }            
+
+            @Override
+            protected void done() {
+                try {
+                    List<RegisMember> members = get().getContent();
+                    TableModel dataModel = createTableModelFor(members);
+                    table.setModel(dataModel);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private void refreshMemberListBySearchInput(String keyword) {
+        SwingWorker<Page<RegisMember>,Void> worker;
+        worker = new SwingWorker<Page<RegisMember>, Void>() {
+            @Override
+            protected Page<RegisMember> doInBackground() throws Exception {
+                return memberController.findAllMemberByKodeLike(keyword, Pageable.unpaged());
+            }            
+
+            @Override
+            protected void done() {
+                try {
+                    List<RegisMember> members = get().getContent();
+                    TableModel dataModel = createTableModelFor(members);
+                    table.setModel(dataModel);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private TableModel createTableModelFor(List<RegisMember> members) {
+        TableModel dataModel = new AbstractTableModel() {
+            
+            @Override
+            public int getRowCount() {
+                return members.size();
+            }
+            
+            @Override
+            public int getColumnCount() {
+                return RegisMemberController.columnNames.length;
+            }
+            
+            @Override
+            public String getColumnName(int column) {
+                return RegisMemberController.columnNames[column];
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                switch (columnIndex) {
+                    case 0: return String.class;
+                    case 1: return String.class;
+                    case 2: return String.class;
+                    case 3: return String.class;
+                    case 4: return String.class;
+                    case 5: return String.class;
+                    case 6: return String.class;
+                    case 7: return String.class;
+                    default: return String.class;
+                }
+            }
+            
+            @Override
+            public Object getValueAt(int arg0, int arg1) {
+                RegisMember member = members.get(arg0);
+                switch (arg1) {
+                    case 0: return member.getKode();
+                    case 1: return member.getNoKtp();
+                    case 2: return member.getNama();
+                    case 3: return member.getAlamat();
+                    case 4: return member.getNoTelp();
+                    case 5: return ofNullable(member.getTglDaftar()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                    case 6: return ofNullable(member.getTglHabis()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                    case 7: return member.getBayar();
+                    default: return "";
+                }
+            }
+        };
+        return dataModel;
+    }
+    
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        if (selectedMember != null) {
+            memberController.delete(selectedMember);
+        }
+        clearMemberForm();
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        clearMemberForm();
+        refreshMemberList();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void searchInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputActionPerformed
+        String keyword = searchInput.getText();
+        if (keyword != null && !keyword.isEmpty()){
+            refreshMemberListBySearchInput("%" + keyword.toLowerCase() + "%");
+        } else {
+            refreshMemberList();
+        }
+    }//GEN-LAST:event_searchInputActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnKembali;
+    private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnSimpan;
+    private com.toedter.calendar.JDateChooser datcTglDaftar;
+    private com.toedter.calendar.JDateChooser datcTglHabis;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -499,19 +539,13 @@ public class FormRegisterMember extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField searchInput;
     private javax.swing.JTable table;
-    private javax.swing.JTextField talamat;
-    private javax.swing.JTextField tbayar;
-    private javax.swing.JButton tedit;
-    private javax.swing.JButton thapus;
-    private javax.swing.JTextField tkodmem;
-    private javax.swing.JTextField tnama;
-    private javax.swing.JTextField tnoktp;
-    private javax.swing.JTextField tnotlpn;
-    private javax.swing.JButton tsimpan;
-    private javax.swing.JButton ttambah;
-    private com.toedter.calendar.JDateChooser ttgldaf;
-    private com.toedter.calendar.JDateChooser ttglha;
+    private javax.swing.JTextField txtfAlamat;
+    private javax.swing.JTextField txtfBayar;
+    private javax.swing.JTextField txtfKode;
+    private javax.swing.JTextField txtfNama;
+    private javax.swing.JTextField txtfNoKtp;
+    private javax.swing.JTextField txtfNoTelp;
     // End of variables declaration//GEN-END:variables
 }

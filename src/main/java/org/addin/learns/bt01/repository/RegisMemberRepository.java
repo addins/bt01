@@ -6,6 +6,8 @@
 package org.addin.learns.bt01.repository;
 
 import org.addin.learns.bt01.domain.RegisMember;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -13,4 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author addin
  */
 public interface RegisMemberRepository extends JpaRepository<RegisMember, Long> {
+
+    public Page<RegisMember> findAllByKodeLike(String kode, Pageable page);
 }

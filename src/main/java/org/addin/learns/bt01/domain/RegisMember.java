@@ -44,4 +44,52 @@ public class RegisMember implements Serializable {
     private ZonedDateTime tglHabis;
 
     private String bayar;
+    
+    public RegisMember withKode(String kode) {
+        this.kode = kode;
+        return this;
+    }
+    
+    public RegisMember withnoKtp(String noKtp) {
+        this.noKtp = noKtp;
+        return this;
+    }
+    
+    public RegisMember withnama(String nama) {
+        this.nama = nama;
+        return this;
+    }
+    
+    public RegisMember withalamat(String alamat) {
+        this.alamat = alamat;
+        return this;
+    }
+    
+    
+    public RegisMember withNoTelp(String noTelp) {
+        this.noTelp = noTelp;
+        return this;
+    }
+    
+    
+    public RegisMember withTglDaftar(ZonedDateTime tglDaftar) {
+        this.tglDaftar = tglDaftar;
+        return this;
+    }
+    
+    
+    public RegisMember withTglHabis(ZonedDateTime tglHabis) {
+        this.tglHabis = tglHabis;
+        return this;
+    }
+    
+    
+    public RegisMember withBayar(String bayar) {
+        this.bayar = bayar;
+        return this;
+    }
+    
+    
+    
+    
 }
