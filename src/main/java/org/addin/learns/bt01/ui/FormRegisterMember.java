@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -105,9 +106,10 @@ public class FormRegisterMember extends javax.swing.JFrame {
         txtfBayar = new javax.swing.JTextField();
         btnSimpan = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
+        btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        searchInput = new javax.swing.JTextField();
+        txtfSearchInput = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         btnKembali = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
@@ -161,48 +163,58 @@ public class FormRegisterMember extends javax.swing.JFrame {
             }
         });
 
+        btnReset.setText("Reset");
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnPrint)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(datcTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel8)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel4))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnPrint)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(datcTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtfBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtfNoTelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(jLabel8)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel7)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel4))
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(txtfBayar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtfNoTelp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(45, 45, 45)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(datcTglDaftar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(txtfAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(45, 45, 45)
+                                    .addComponent(jLabel3)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(datcTglDaftar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtfAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtfKode, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtfNama, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtfNoKtp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addComponent(txtfKode, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtfNama, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtfNoKtp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -243,7 +255,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                    .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36))
         );
 
@@ -281,9 +294,9 @@ public class FormRegisterMember extends javax.swing.JFrame {
             table.getColumnModel().getColumn(0).setResizable(false);
         }
 
-        searchInput.addActionListener(new java.awt.event.ActionListener() {
+        txtfSearchInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchInputActionPerformed(evt);
+                txtfSearchInputActionPerformed(evt);
             }
         });
 
@@ -299,6 +312,11 @@ public class FormRegisterMember extends javax.swing.JFrame {
         jLabel10.setText("Data Member");
 
         btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         btnHapus.setText("Hapus");
         btnHapus.addActionListener(new java.awt.event.ActionListener() {
@@ -333,7 +351,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtfSearchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -348,16 +366,16 @@ public class FormRegisterMember extends javax.swing.JFrame {
                         .addComponent(jLabel10)
                         .addGap(21, 21, 21)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(searchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtfSearchInput, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(55, 55, 55)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(59, 59, 59))))
         );
 
@@ -368,42 +386,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
         menuUtama.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnKembaliActionPerformed
-
-    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        // TODO add your handling code here:        
-    }//GEN-LAST:event_btnPrintActionPerformed
-
-    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        String kode = txtfKode.getText();
-        String noKtp = txtfNoKtp.getText();
-        String nama = txtfNama.getText();
-        String alamat = txtfAlamat.getText();
-        String noTelp = txtfNoTelp.getText();
-
-        final Date tglDaftarDate = datcTglDaftar.getDate();
-        ZonedDateTime tglDaftar = null;
-        if (tglDaftarDate != null) {
-            tglDaftar = ofInstant(tglDaftarDate.toInstant(), ZoneId.systemDefault());
-        }
-
-        final Date tglHabisDate = datcTglHabis.getDate();
-        ZonedDateTime tglHabis = null;
-        if (tglHabisDate != null) {
-            tglHabis = ofInstant(tglHabisDate.toInstant(), ZoneId.systemDefault());
-        }
-
-        String bayar = txtfBayar.getText();
-
-        if (kode == null || kode.isEmpty()) {
-            // kode should not be empty.
-            return;
-        }
-
-        if (!saving) {
-            createAndSaveMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
-            clearMemberForm();
-        }
-    }//GEN-LAST:event_btnSimpanActionPerformed
 
     public void clearMemberForm() {
         txtfKode.setText("");
@@ -417,7 +399,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     }
 
-    private void createAndSaveMember(String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
+    private void createAndSaveMember(Long id, String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
         RegisMember member = new RegisMember()
                 .withKode(kode)
                 .withnoKtp(noKtp)
@@ -427,6 +409,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .withTglDaftar(tglDaftar)
                 .withTglHabis(tglHabis)
                 .withBayar(bayar);
+        
+        member.setId(id);
 
         saving = true;
         btnSimpan.setEnabled(false);
@@ -466,7 +450,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     private void refreshMemberListBySearchInput(String keyword) {
         refreshing = true;
-        searchInput.setEnabled(false);
+        txtfSearchInput.setEnabled(false);
         new SwingWorker<Page<RegisMember>, Void>() {
             @Override
             protected Page<RegisMember> doInBackground() throws Exception {
@@ -482,7 +466,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 refreshing = false;
-                searchInput.setEnabled(true);
+                txtfSearchInput.setEnabled(true);
             }
         }.execute();
     }
@@ -602,20 +586,99 @@ public class FormRegisterMember extends javax.swing.JFrame {
         refreshMemberList();
     }//GEN-LAST:event_formWindowOpened
 
-    private void searchInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputActionPerformed
-        String keyword = searchInput.getText();
+    private void txtfSearchInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtfSearchInputActionPerformed
+        String keyword = txtfSearchInput.getText();
         if (keyword != null && !keyword.isEmpty()) {
             refreshMemberListBySearchInput("%" + keyword.toLowerCase() + "%");
         } else {
             refreshMemberList();
         }
-    }//GEN-LAST:event_searchInputActionPerformed
+    }//GEN-LAST:event_txtfSearchInputActionPerformed
 
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        if (selectedMemberId != null) {
+            editSelectedMember();
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        String kode = txtfKode.getText();
+        String noKtp = txtfNoKtp.getText();
+        String nama = txtfNama.getText();
+        String alamat = txtfAlamat.getText();
+        String noTelp = txtfNoTelp.getText();
+
+        final Date tglDaftarDate = datcTglDaftar.getDate();
+        ZonedDateTime tglDaftar = null;
+        if (tglDaftarDate != null) {
+            tglDaftar = ofInstant(tglDaftarDate.toInstant(), ZoneId.systemDefault());
+        }
+
+        final Date tglHabisDate = datcTglHabis.getDate();
+        ZonedDateTime tglHabis = null;
+        if (tglHabisDate != null) {
+            tglHabis = ofInstant(tglHabisDate.toInstant(), ZoneId.systemDefault());
+        }
+
+        String bayar = txtfBayar.getText();
+
+        if (kode == null || kode.isEmpty()) {
+            // kode should not be empty.
+            return;
+        }
+
+        if (!saving) {
+            createAndSaveMember(selectedMemberId, kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
+            clearMemberForm();
+        }
+    }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        clearMemberForm();
+        selectedMemberId = null;
+    }//GEN-LAST:event_btnResetActionPerformed
+
+    private void editSelectedMember() {
+        btnEdit.setEnabled(false);
+        new SwingWorker<RegisMember, Void>() {
+            @Override
+            protected RegisMember doInBackground() throws Exception {
+                return memberController.findOne(selectedMemberId);
+            }
+            
+            @Override
+            protected void done() {
+                try {
+                    RegisMember oneMember = get();
+                    setFormFieldsWith(oneMember);
+                    btnEdit.setEnabled(true);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.execute();
+    }
+
+    private void setFormFieldsWith(RegisMember member) {
+        txtfKode.setText(member.getKode());
+        txtfNoKtp.setText(member.getNoKtp());
+        txtfNama.setText(member.getNama());
+        txtfAlamat.setText(member.getAlamat());
+        txtfNoTelp.setText(member.getNoTelp());
+        datcTglDaftar.setDate(Date.from(member.getTglDaftar().toInstant()));
+        datcTglHabis.setDate(Date.from(member.getTglHabis().toInstant()));
+        txtfBayar.setText(member.getBayar());
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnKembali;
     private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSimpan;
     private com.toedter.calendar.JDateChooser datcTglDaftar;
     private com.toedter.calendar.JDateChooser datcTglHabis;
@@ -631,7 +694,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField searchInput;
     private javax.swing.JTable table;
     private javax.swing.JTextField txtfAlamat;
     private javax.swing.JTextField txtfBayar;
@@ -639,5 +701,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
     private javax.swing.JTextField txtfNama;
     private javax.swing.JTextField txtfNoKtp;
     private javax.swing.JTextField txtfNoTelp;
+    private javax.swing.JTextField txtfSearchInput;
     // End of variables declaration//GEN-END:variables
 }

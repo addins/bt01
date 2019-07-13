@@ -46,6 +46,20 @@ public class RegisMemberController {
         return memberRepository.findAllByKodeLike(kode, page);
     }
     
+    public RegisMember findOne(Long id) {
+        final RegisMember member = memberRepository.getOne(id);
+        member.getId();
+        member.getKode();
+        member.getNoKtp();
+        member.getNama();
+        member.getAlamat();
+        member.getNoTelp();
+        member.getTglDaftar();
+        member.getTglHabis();
+        member.getBayar();
+        return member;
+    }
+    
     public RegisMember save(RegisMember member) {
         return memberRepository.save(member);
     }
