@@ -585,8 +585,22 @@ public class FormRegisterMember extends javax.swing.JFrame {
         if (selectedMemberId != null) {
             int confirmedResult = showConfirmDialog(rootPane, "Yakin hapus data terpilih?", "Hapus", JOptionPane.YES_NO_OPTION);
             if (YES_OPTION == confirmedResult) {
-                memberController.delete(selectedMemberId);
-                refreshMemberList();
+                deleting = true;
+                btnHapus.setEnabled(!deleting);
+                new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        memberController.delete(selectedMemberId);
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        deleting = false;
+                        btnHapus.setEnabled(!deleting);
+                        refreshMemberList();
+                    }
+                }.execute();
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
