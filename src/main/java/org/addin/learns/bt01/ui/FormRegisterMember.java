@@ -1,6 +1,5 @@
 package org.addin.learns.bt01.ui;
 
-
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +10,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import static java.time.ZonedDateTime.ofInstant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -26,34 +26,40 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.RegisMemberController;
+import static org.addin.learns.bt01.controller.RegisMemberController.columnNames;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 /**
  *
  * @author eroot
  */
 @Component
 public class FormRegisterMember extends javax.swing.JFrame {
-    
+
     @Autowired
     private MenuUtama menuUtama;
-    
+
     @Autowired
     private RegisMemberController memberController;
-    
+
     private RegisMember selectedMember;
-    
+
+    private boolean refreshing = false;
+
+    private boolean saving = false;
+
+    private boolean deleting = false;
+
     /**
      * Creates new form from_regismember
      */
@@ -356,15 +362,34 @@ public class FormRegisterMember extends javax.swing.JFrame {
         String nama = txtfNama.getText();
         String alamat = txtfAlamat.getText();
         String noTelp = txtfNoTelp.getText();
-        ZonedDateTime tglDaftar = ZonedDateTime.ofInstant(datcTglDaftar.getDate().toInstant(), ZoneId.systemDefault());
-        ZonedDateTime tglHabis = ZonedDateTime.ofInstant(datcTglHabis.getDate().toInstant(), ZoneId.systemDefault());
+        final Date tglDaftarDate = datcTglDaftar.getDate();
+
+        ZonedDateTime tglDaftar = null;
+        if (tglDaftarDate != null) {
+            tglDaftar = ofInstant(tglDaftarDate.toInstant(), ZoneId.systemDefault());
+        }
+
+        ZonedDateTime tglHabis = null;
+        if (tglHabis != null) {
+            tglHabis = ofInstant(datcTglHabis.getDate().toInstant(), ZoneId.systemDefault());
+        }
+
         String bayar = txtfBayar.getText();
         
-        createMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
-        clearMemberForm();
+        if (kode == null || kode.isEmpty()) {
+            // kode should not be empty.
+            return;
+        }
+
+        if (!saving) {
+            saving = true;
+            btnSimpan.setEnabled(false);
+            createMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
+            clearMemberForm();
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
-    public void clearMemberForm(){
+    public void clearMemberForm() {
         txtfKode.setText("");
         txtfNoKtp.setText("");
         txtfNama.setText("");
@@ -373,9 +398,9 @@ public class FormRegisterMember extends javax.swing.JFrame {
         txtfBayar.setText("");
         datcTglDaftar.setCalendar(null);
         datcTglHabis.setCalendar(null);
-        
+
     }
-    
+
     private void createMember(String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
         RegisMember member = new RegisMember()
                 .withKode(kode)
@@ -386,121 +411,142 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .withTglDaftar(tglDaftar)
                 .withTglHabis(tglHabis)
                 .withBayar(bayar);
-        
-        SwingWorker<RegisMember,Void> worker = new SwingWorker<RegisMember, Void>() {
+
+        new SwingWorker<RegisMember, Void>() {
             @Override
             protected RegisMember doInBackground() throws Exception {
                 return memberController.save(member);
             }
-            
+
             @Override
             protected void done() {
                 refreshMemberList();
+                saving = false;
+                btnSimpan.setEnabled(true);
             }
-        };
-        
-        worker.execute();
+        }.execute();
     }
 
     private void refreshMemberList() {
-        SwingWorker<Page<RegisMember>,Void> worker;
-        worker = new SwingWorker<Page<RegisMember>, Void>() {
+        new SwingWorker<Page<RegisMember>, Void>() {
             @Override
             protected Page<RegisMember> doInBackground() throws Exception {
                 return memberController.findAllMember(Pageable.unpaged());
-            }            
+            }
 
             @Override
             protected void done() {
                 try {
                     List<RegisMember> members = get().getContent();
-                    TableModel dataModel = createTableModelFor(members);
-                    table.setModel(dataModel);
+                    updateTableModel(members);
                 } catch (InterruptedException | ExecutionException ex) {
                     Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        };
-        worker.execute();
+        }.execute();
     }
 
     private void refreshMemberListBySearchInput(String keyword) {
-        SwingWorker<Page<RegisMember>,Void> worker;
-        worker = new SwingWorker<Page<RegisMember>, Void>() {
+        refreshing = true;
+        searchInput.setEnabled(false);
+        new SwingWorker<Page<RegisMember>, Void>() {
             @Override
             protected Page<RegisMember> doInBackground() throws Exception {
                 return memberController.findAllMemberByKodeLike(keyword, Pageable.unpaged());
-            }            
+            }
 
             @Override
             protected void done() {
                 try {
                     List<RegisMember> members = get().getContent();
-                    TableModel dataModel = createTableModelFor(members);
-                    table.setModel(dataModel);
+                    updateTableModel(members);
                 } catch (InterruptedException | ExecutionException ex) {
                     Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                refreshing = false;
+                searchInput.setEnabled(true);
             }
-        };
-        worker.execute();
+        }.execute();
+    }
+
+    private void updateTableModel(List<RegisMember> members) {
+        TableModel dataModel = createTableModelFor(members);
+        table.setModel(dataModel);
     }
 
     private TableModel createTableModelFor(List<RegisMember> members) {
-        TableModel dataModel = new AbstractTableModel() {
-            
+        return new AbstractTableModel() {
+
             @Override
             public int getRowCount() {
                 return members.size();
             }
-            
+
             @Override
             public int getColumnCount() {
-                return RegisMemberController.columnNames.length;
+                return columnNames.length;
             }
-            
+
             @Override
             public String getColumnName(int column) {
-                return RegisMemberController.columnNames[column];
+                return columnNames[column];
             }
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
-                    case 0: return String.class;
-                    case 1: return String.class;
-                    case 2: return String.class;
-                    case 3: return String.class;
-                    case 4: return String.class;
-                    case 5: return String.class;
-                    case 6: return String.class;
-                    case 7: return String.class;
-                    default: return String.class;
+                    case 0:
+                        return String.class;
+                    case 1:
+                        return String.class;
+                    case 2:
+                        return String.class;
+                    case 3:
+                        return String.class;
+                    case 4:
+                        return String.class;
+                    case 5:
+                        return String.class;
+                    case 6:
+                        return String.class;
+                    case 7:
+                        return String.class;
+                    default:
+                        return String.class;
                 }
             }
-            
+
             @Override
             public Object getValueAt(int arg0, int arg1) {
                 RegisMember member = members.get(arg0);
                 switch (arg1) {
-                    case 0: return member.getKode();
-                    case 1: return member.getNoKtp();
-                    case 2: return member.getNama();
-                    case 3: return member.getAlamat();
-                    case 4: return member.getNoTelp();
-                    case 5: return ofNullable(member.getTglDaftar()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
-                    case 6: return ofNullable(member.getTglHabis()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
-                    case 7: return member.getBayar();
-                    default: return "";
+                    case 0:
+                        return member.getKode();
+                    case 1:
+                        return member.getNoKtp();
+                    case 2:
+                        return member.getNama();
+                    case 3:
+                        return member.getAlamat();
+                    case 4:
+                        return member.getNoTelp();
+                    case 5:
+                        return ofNullable(member.getTglDaftar()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                    case 6:
+                        return ofNullable(member.getTglHabis()).map(d -> d.format(DateTimeFormatter.ISO_DATE)).orElse(null);
+                    case 7:
+                        return member.getBayar();
+                    default:
+                        return "";
                 }
             }
         };
-        return dataModel;
     }
-    
+
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         if (selectedMember != null) {
             memberController.delete(selectedMember);
+            refreshMemberList();
         }
         clearMemberForm();
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -512,7 +558,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     private void searchInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputActionPerformed
         String keyword = searchInput.getText();
-        if (keyword != null && !keyword.isEmpty()){
+        if (keyword != null && !keyword.isEmpty()) {
             refreshMemberListBySearchInput("%" + keyword.toLowerCase() + "%");
         } else {
             refreshMemberList();
