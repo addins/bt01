@@ -1,25 +1,15 @@
 package org.addin.learns.bt01.ui;
 
-import java.awt.HeadlessException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
@@ -28,12 +18,10 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.RegisMemberController;
 import static org.addin.learns.bt01.controller.RegisMemberController.columnNames;
 import org.addin.learns.bt01.domain.RegisMember;
-import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -412,8 +400,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
         }
 
         if (!saving) {
-            saving = true;
-            btnSimpan.setEnabled(false);
             createAndSaveMember(kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
             clearMemberForm();
         }
@@ -442,6 +428,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .withTglHabis(tglHabis)
                 .withBayar(bayar);
 
+        saving = true;
+        btnSimpan.setEnabled(false);
         new SwingWorker<RegisMember, Void>() {
             @Override
             protected RegisMember doInBackground() throws Exception {
@@ -585,25 +573,29 @@ public class FormRegisterMember extends javax.swing.JFrame {
         if (selectedMemberId != null) {
             int confirmedResult = showConfirmDialog(rootPane, "Yakin hapus data terpilih?", "Hapus", JOptionPane.YES_NO_OPTION);
             if (YES_OPTION == confirmedResult) {
-                deleting = true;
-                btnHapus.setEnabled(!deleting);
-                new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        memberController.delete(selectedMemberId);
-                        return null;
-                    }
-
-                    @Override
-                    protected void done() {
-                        deleting = false;
-                        btnHapus.setEnabled(!deleting);
-                        refreshMemberList();
-                    }
-                }.execute();
+                deleteSelectedMember();
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void deleteSelectedMember() {
+        deleting = true;
+        btnHapus.setEnabled(!deleting);
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                memberController.delete(selectedMemberId);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                deleting = false;
+                btnHapus.setEnabled(!deleting);
+                refreshMemberList();
+            }
+        }.execute();
+    }
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         clearMemberForm();
