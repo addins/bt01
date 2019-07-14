@@ -51,4 +51,49 @@ public class Booking {
     private BigDecimal dp;
     
     private String statusPembayaran;
+    
+    public Booking withNoBooking(String noBooking) {
+        this.noBooking = noBooking;
+        return this;
+    }
+    
+    public Booking withTglSewa(ZonedDateTime tglSewa) {
+        this.tglSewa = tglSewa;
+        return this;
+    }
+    
+    public Booking withMember(RegisMember member) {
+        this.member = member;
+        return this;
+    }
+    
+    public Booking withNamaPenyewa(String namaPenyewa) {
+        this.namaPenyewa = namaPenyewa;
+        return this;
+    }
+    
+    public Booking withKodeLapangan(String kodeLapangan) {
+        this.kodeLapangan = kodeLapangan;
+        return this;
+    }
+    
+    public Booking withJamMulai(LocalTime jamMulai) {
+        this.jamMulai = jamMulai;
+        return this;
+    }
+    
+    public Booking withJamSelesai(LocalTime jamSelesai) {
+        this.jamSelesai = jamSelesai;
+        return this;
+    }
+    
+    public Booking withDp(BigDecimal dp) {
+        this.dp = dp;
+        return this;
+    }
+    
+    public Booking withStatusPembayaran(String statusPembayaran) {
+        this.statusPembayaran = statusPembayaran;
+        return this;
+    }
 }
