@@ -177,7 +177,7 @@ public class PilihMemberDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void updateTableModel(List<RegisMember> members) {
-        TableModel dataModel = TableModelUtils.createTableModelFor(members);
+        TableModel dataModel = TableModelUtils.createTableModelForMember(members);
         tableMember.setModel(dataModel);
     }
 

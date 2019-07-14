@@ -626,7 +626,7 @@ public class FormBooking extends javax.swing.JFrame {
     }
 
     private void updateTableModel(Page<Booking> bookings) {
-        TableModel tableModel = TableModelUtils.createTableModelFor(bookings);
+        TableModel tableModel = TableModelUtils.createTableModelForBooking(bookings);
         table.setModel(tableModel);
     }
 

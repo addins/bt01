@@ -471,7 +471,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }
 
     private void updateTableModel(List<RegisMember> members) {
-        TableModel dataModel = TableModelUtils.createTableModelFor(members);
+        TableModel dataModel = TableModelUtils.createTableModelForMember(members);
         table.setModel(dataModel);
     }
 
