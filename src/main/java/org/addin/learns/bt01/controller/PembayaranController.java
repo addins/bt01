@@ -5,6 +5,8 @@
  */
 package org.addin.learns.bt01.controller;
 
+import java.time.LocalDate;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Pembayaran;
@@ -55,7 +57,19 @@ public class PembayaranController {
         return pembayaranRepository.findAll(page);
     }
     
-    public Pembayaran save(Pembayaran pembayaran) {
+    public Pembayaran save(@Valid Pembayaran pembayaran) {
         return pembayaranRepository.save(pembayaran);
+    }
+
+    public String findNextNoTransaksi() {
+        Long maxId = pembayaranRepository.getMaxId();
+        Long nextId = maxId + 1;
+        LocalDate date = LocalDate.now();
+        String noTransaksi = "" + String.format("%02d", date.getDayOfMonth());
+        noTransaksi += "-" + String.format("%02d", date.getMonthValue());
+        final String yearStr = date.getYear() + "";
+        noTransaksi += "-" + yearStr.substring(yearStr.length() - 2);
+        noTransaksi += "-" + String.format("%03d", nextId);
+        return noTransaksi;
     }
 }

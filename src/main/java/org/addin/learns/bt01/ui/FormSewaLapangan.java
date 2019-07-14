@@ -179,6 +179,8 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
         jLabel2.setText("No Transaksi");
 
+        txtfNoTransaksi.setEditable(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -460,10 +462,10 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         txtfKodeLapangan.setText("");
         txtfNamaPenyewa.setText("");
         txtfNoBooking.setText("");
-        txtfNoTransaksi.setText("");
         txtfStatusMember.setText("");
         txtfStatusPembayaran.setText("");
         txtfTgl.setText("");
+        refreshNextNoTransaksi();
     }
     
     private void refreshBookingList() {
@@ -560,5 +562,27 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
     private BigDecimal fromStringToBigDec(String harusDibayar) {
         return harusDibayar != null && !harusDibayar.isBlank() ? new BigDecimal(harusDibayar) : null;
+    }
+
+    private void refreshNextNoTransaksi() {
+        btnSimpan.setEnabled(false);
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return controller.findNextNoTransaksi();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    String nextNoTransaksi = get();
+                    txtfNoTransaksi.setText(nextNoTransaksi);
+                    btnSimpan.setEnabled(true);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        }.execute();
     }
 }
