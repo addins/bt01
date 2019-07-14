@@ -13,6 +13,7 @@ import javax.swing.table.TableModel;
 import org.addin.learns.bt01.domain.RegisMember;
 import static java.util.Optional.ofNullable;
 import org.addin.learns.bt01.domain.Booking;
+import org.addin.learns.bt01.domain.Pembayaran;
 import org.springframework.data.domain.Page;
 
 /**
@@ -45,7 +46,22 @@ public class TableModelUtils {
         "Status Bayar"
     };
     
-    public static TableModel createTableModelFor(List<RegisMember> members) {
+    public static final String[] pembayaranColumnNames = new String[] {
+        "ID",
+        "No. Transaksi",
+        "No. Booking",
+        "Tgl Sewa",
+        "Kode Member",
+        "Nama Penyewa",
+        "Kode Lapangan",
+        "Jam Mulai",
+        "Jam Selesai",
+        "DP",
+        "Harus Bayar",
+        "Status Bayar"
+    };
+    
+    public static TableModel createTableModelForMember(List<RegisMember> members) {
         return new AbstractTableModel() {
 
             @Override
@@ -121,7 +137,7 @@ public class TableModelUtils {
             }
         };
     }
-    public static TableModel createTableModelFor(Page<Booking> bookings) {
+    public static TableModel createTableModelForBooking(Page<Booking> bookings) {
         List<Booking> content = bookings.getContent();
         return new AbstractTableModel() {
             @Override
@@ -164,6 +180,61 @@ public class TableModelUtils {
                         return booking.getDp();
                     case 9:
                         return booking.getStatusPembayaran();
+                    default:
+                        return "";
+                }
+            }
+        };
+    }
+
+    public static TableModel createTableModelForPembayaran(Page<Pembayaran> pembayarans) {
+        List<Pembayaran> content = pembayarans.getContent();
+        return new AbstractTableModel() {
+            @Override
+            public int getRowCount() {
+                return content.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return pembayaranColumnNames.length;
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return pembayaranColumnNames[column];
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Pembayaran pembayaran = content.get(rowIndex);
+                final Optional<Booking> booking = ofNullable(pembayaran.getBooking());
+                final Optional<RegisMember> member = booking.map(Booking::getMember);
+                switch (columnIndex) {
+                    case 0:
+                        return pembayaran.getId();
+                    case 1:
+                        return pembayaran.getNoTransaksi();
+                    case 2:
+                        return booking.map(Booking::getNoBooking).orElse("");
+                    case 3:
+                        return booking.map(Booking::getTglSewa).orElse(null);
+                    case 4:
+                        return member.map(RegisMember::getKode).orElse("");
+                    case 5:
+                        return booking.map(Booking::getNamaPenyewa).orElse("");
+                    case 6:
+                        return booking.map(Booking::getKodeLapangan).orElse("");
+                    case 7:
+                        return booking.map(Booking::getJamMulai).orElse(null);
+                    case 8:
+                        return booking.map(Booking::getJamSelesai).orElse(null);
+                    case 9:
+                        return booking.map(Booking::getDp).orElse(null);
+                    case 10:
+                        return pembayaran.getHarusBayar();
+                    case 11:
+                        return booking.map(Booking::getStatusPembayaran).orElse("");
                     default:
                         return "";
                 }
