@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
@@ -30,6 +32,7 @@ import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Lapangan;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.BookingRepository;
+import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,8 +52,9 @@ public class FormBooking extends javax.swing.JFrame {
 
     @Autowired
     private BookingController bookingController;
-
-    private Long selectedBookingId;
+    
+    @Autowired
+    private RegisMemberRepository memberRepository;
 
     private Long selectedMemberId;
 
@@ -113,6 +117,7 @@ public class FormBooking extends javax.swing.JFrame {
         spinMinSelesai = new javax.swing.JSpinner();
         radbMemberYa = new javax.swing.JRadioButton();
         radbMemberTidak = new javax.swing.JRadioButton();
+        btnPilihMember = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         jLabel15 = new javax.swing.JLabel();
@@ -154,6 +159,10 @@ public class FormBooking extends javax.swing.JFrame {
 
         txtfTglHabis.setEditable(false);
 
+        txtfKodeMember.setEditable(false);
+
+        txtfNamaMember.setEditable(false);
+
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel10.setText("Kode Lapangan");
 
@@ -184,6 +193,13 @@ public class FormBooking extends javax.swing.JFrame {
         radbMemberTidak.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 radbMemberTidakItemStateChanged(evt);
+            }
+        });
+
+        btnPilihMember.setText("Pilih");
+        btnPilihMember.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPilihMemberActionPerformed(evt);
             }
         });
 
@@ -219,13 +235,12 @@ public class FormBooking extends javax.swing.JFrame {
                                         .addComponent(jLabel4)
                                         .addComponent(jLabel6)))
                                 .addGap(73, 73, 73)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtfTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfStatusPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfDp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNamaPenyewa, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNamaMember, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtfKodeMember, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(datcTglSewa, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNoBooking, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -241,8 +256,12 @@ public class FormBooking extends javax.swing.JFrame {
                                     .addGap(28, 28, 28)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(spinMinMulai, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                                        .addComponent(spinMinSelesai)))))))
-                .addContainerGap(30, Short.MAX_VALUE))
+                                        .addComponent(spinMinSelesai))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtfKodeMember, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnPilihMember, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,7 +282,8 @@ public class FormBooking extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtfKodeMember, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(btnPilihMember, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtfNamaMember, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -350,7 +370,7 @@ public class FormBooking extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -440,7 +460,7 @@ public class FormBooking extends javax.swing.JFrame {
                 .withKodeLapangan(selectedKodeLapangan)
                 .withJamMulai(LocalTime.of(jamMulaiHour, jamMulaiMin))
                 .withJamSelesai(LocalTime.of(jamSelesaiHour, jamSelesaiMin))
-                .withDp(new BigDecimal(dp))
+                .withDp(dp.isBlank() ? null : new BigDecimal(dp))
                 .withStatusPembayaran(statusPembayaran);
 
         saving = true;
@@ -477,6 +497,11 @@ public class FormBooking extends javax.swing.JFrame {
         spinMinSelesai.setValue(0);
         txtfDp.setText("");
         txtfStatusPembayaran.setText("");
+        
+        txtfKodeMember.setText("");
+        txtfNamaMember.setText("");
+        txtfTglHabis.setText("");
+        selectedMemberId = null;
     }
 
     private ZonedDateTime createZonedDateTimeFromDate(Date tglSewaDate) {
@@ -508,9 +533,21 @@ public class FormBooking extends javax.swing.JFrame {
         refreshBookingList();
     }//GEN-LAST:event_combKodeLapanganFilterItemStateChanged
 
+    private void btnPilihMemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihMemberActionPerformed
+        PilihMemberDialog pilihMemberDialog = new PilihMemberDialog(memberRepository, this, true);
+        pilihMemberDialog.setVisible(true);
+        RegisMember selectedMember = pilihMemberDialog.getSelectedMember();
+        if (selectedMember != null) {
+            selectedMemberId = selectedMember.getId();
+            txtfKodeMember.setText(selectedMember.getKode());
+            txtfNamaMember.setText(selectedMember.getNama());
+        }
+    }//GEN-LAST:event_btnPilihMemberActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
+    private javax.swing.JButton btnPilihMember;
     private javax.swing.JButton btnSimpan;
     private javax.swing.ButtonGroup btngrIsMember;
     private javax.swing.JComboBox<String> combKodeLapangan;
@@ -682,6 +719,7 @@ public class FormBooking extends javax.swing.JFrame {
         txtfTglHabis.setText("");
         txtfKodeMember.setEnabled(false);
         txtfNamaMember.setEnabled(false);
+        btnPilihMember.setEnabled(false);
         selectedMemberId = null;
     }
 
@@ -691,6 +729,7 @@ public class FormBooking extends javax.swing.JFrame {
         txtfTglHabis.setText("");
         txtfKodeMember.setEnabled(true);
         txtfNamaMember.setEnabled(true);
+        btnPilihMember.setEnabled(true);
         selectedMemberId = null;
     }
 

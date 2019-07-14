@@ -20,7 +20,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.RegisMemberController;
-import static org.addin.learns.bt01.controller.RegisMemberController.columnNames;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -472,85 +471,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }
 
     private void updateTableModel(List<RegisMember> members) {
-        TableModel dataModel = createTableModelFor(members);
+        TableModel dataModel = TableModelUtils.createTableModelFor(members);
         table.setModel(dataModel);
-    }
-
-    private TableModel createTableModelFor(List<RegisMember> members) {
-        return new AbstractTableModel() {
-
-            @Override
-            public int getRowCount() {
-                return members.size();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return columnNames.length;
-            }
-
-            @Override
-            public String getColumnName(int column) {
-                return columnNames[column];
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                switch (columnIndex) {
-                    case 0:
-                        return Long.class;
-                    case 1:
-                        return String.class;
-                    case 2:
-                        return String.class;
-                    case 3:
-                        return String.class;
-                    case 4:
-                        return String.class;
-                    case 5:
-                        return String.class;
-                    case 6:
-                        return String.class;
-                    case 7:
-                        return String.class;
-                    case 8:
-                        return String.class;
-                    default:
-                        return String.class;
-                }
-            }
-
-            @Override
-            public Object getValueAt(int arg0, int arg1) {
-                RegisMember member = members.get(arg0);
-                switch (arg1) {
-                    case 0:
-                        return member.getId();
-                    case 1:
-                        return member.getKode();
-                    case 2:
-                        return member.getNoKtp();
-                    case 3:
-                        return member.getNama();
-                    case 4:
-                        return member.getAlamat();
-                    case 5:
-                        return member.getNoTelp();
-                    case 6:
-                        return ofNullable(member.getTglDaftar())
-                                .map(d -> d.format(DateTimeFormatter.ISO_DATE))
-                                .orElse(null);
-                    case 7:
-                        return ofNullable(member.getTglHabis())
-                                .map(d -> d.format(DateTimeFormatter.ISO_DATE))
-                                .orElse(null);
-                    case 8:
-                        return member.getBayar();
-                    default:
-                        return "";
-                }
-            }
-        };
     }
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed

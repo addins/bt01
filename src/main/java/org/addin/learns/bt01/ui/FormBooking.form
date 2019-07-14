@@ -33,7 +33,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="23" max="32767" attributes="0"/>
+              <EmptySpace pref="13" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -142,13 +142,12 @@
                                   <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="txtfTglHabis" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfStatusPembayaran" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfDp" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfNamaPenyewa" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfNamaMember" min="-2" pref="230" max="-2" attributes="0"/>
-                              <Component id="txtfKodeMember" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="datcTglSewa" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfNoBooking" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Group type="102" attributes="0">
@@ -170,10 +169,15 @@
                                       </Group>
                                   </Group>
                               </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txtfKodeMember" min="-2" pref="164" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="btnPilihMember" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="30" max="32767" attributes="0"/>
+                  <EmptySpace pref="40" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -200,6 +204,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txtfKodeMember" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnPilihMember" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -317,8 +322,14 @@
         <Component class="javax.swing.JTextField" name="txtfNamaPenyewa">
         </Component>
         <Component class="javax.swing.JTextField" name="txtfKodeMember">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtfNamaMember">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
@@ -410,6 +421,14 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="radbMemberTidakItemStateChanged"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnPilihMember">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Pilih"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPilihMemberActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

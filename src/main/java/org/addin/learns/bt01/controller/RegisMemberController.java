@@ -26,18 +26,6 @@ public class RegisMemberController {
     @Autowired
     private RegisMemberRepository memberRepository;
     
-    public static final String[] columnNames = new String[]{
-        "ID",
-        "Kode Member",
-        "No. KTP",
-        "Nama",
-        "Alamat",
-        "No. Telp",
-        "Tgl Daftar",
-        "Tgl Habis",
-        "Bayar"
-    };
-    
     public Page<RegisMember> findAllMember(Pageable page) {
         return memberRepository.findAll(page);
     }
