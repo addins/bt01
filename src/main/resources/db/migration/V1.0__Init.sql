@@ -40,6 +40,7 @@ create table `pembayaran` (
     `id` bigint not null AUTO_INCREMENT,
     `booking_id` bigint not null,
     `no_transaksi` varchar(255) not null,
+    `harus_bayar` numeric not null,
     PRIMARY KEY (id),
     FOREIGN KEY (booking_id) REFERENCES booking(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
