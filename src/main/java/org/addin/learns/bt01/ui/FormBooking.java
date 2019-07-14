@@ -165,6 +165,8 @@ public class FormBooking extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel10.setText("Kode Lapangan");
 
+        txtfNoBooking.setEditable(false);
+
         combKodeLapangan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "....", "Lp1", "Lp2", "Lp3" }));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -246,16 +248,15 @@ public class FormBooking extends javax.swing.JFrame {
                                 .addComponent(radbMemberYa)
                                 .addGap(18, 18, 18)
                                 .addComponent(radbMemberTidak))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(combKodeLapangan, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(spinJamMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(28, 28, 28)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(spinMinMulai, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                                        .addComponent(spinMinSelesai))))
+                            .addComponent(combKodeLapangan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(spinJamMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(28, 28, 28)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(spinMinMulai, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                                    .addComponent(spinMinSelesai)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txtfKodeMember, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -422,6 +423,7 @@ public class FormBooking extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         clearForm();
+        refreshNextNoBooking();
         refreshBookingList();
         refreshLapanganList();
     }//GEN-LAST:event_formWindowOpened
@@ -487,7 +489,8 @@ public class FormBooking extends javax.swing.JFrame {
     }
 
     private void clearForm() {
-        txtfNoBooking.setText("");
+        refreshNextNoBooking();
+        txtfNoBooking.setText("");// todo
         datcTglSewa.setDate(null);
         txtfNamaPenyewa.setText("");
         combKodeLapangan.setSelectedIndex(0);
@@ -691,5 +694,27 @@ public class FormBooking extends javax.swing.JFrame {
     private void enableNonMemberInput() {
         txtfNamaPenyewa.setText("");
         txtfNamaPenyewa.setEnabled(true);
+    }
+
+    private void refreshNextNoBooking() {
+        btnSimpan.setEnabled(false);
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return bookingController.findNextNoBooking();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    String nextNoBooking = get();
+                    txtfNoBooking.setText(nextNoBooking);
+                    btnSimpan.setEnabled(true);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        }.execute();
     }
 }

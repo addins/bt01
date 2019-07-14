@@ -58,4 +58,13 @@ public class BookingController {
     public Page<Booking> findAllBookingByKodeLapangan(String kodeLapangan, Pageable pageable) {
         return bookingRepository.findAllByKodeLapanganEquals(kodeLapangan, pageable);
     }
+
+    public Long findMaxBookingId() {
+        return bookingRepository.getMaxId();
+    }
+    
+    public String findNextNoBooking() {
+        Long maxBookingId = findMaxBookingId();
+        return "MB-" +  String.format("%03d", maxBookingId + 1);
+    }
 }
