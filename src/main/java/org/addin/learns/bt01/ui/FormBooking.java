@@ -51,7 +51,7 @@ public class FormBooking extends javax.swing.JFrame {
 
     @Autowired
     private BookingController bookingController;
-    
+
     @Autowired
     private RegisMemberRepository memberRepository;
 
@@ -421,6 +421,7 @@ public class FormBooking extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKembaliActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        clearForm();
         refreshBookingList();
         refreshLapanganList();
     }//GEN-LAST:event_formWindowOpened
@@ -496,7 +497,7 @@ public class FormBooking extends javax.swing.JFrame {
         spinMinSelesai.setValue(0);
         txtfDp.setText("");
         txtfStatusPembayaran.setText("");
-        
+
         txtfKodeMember.setText("");
         txtfNamaMember.setText("");
         txtfTglHabis.setText("");
@@ -653,8 +654,6 @@ public class FormBooking extends javax.swing.JFrame {
         combKodeLapangan.setModel(createComboBoxModelFor(lapangans));
         combKodeLapanganFilter.setModel(createComboBoxModelFor(lapangans));
     }
-
-    
 
     private ComboBoxModel<String> createComboBoxModelFor(Page<Lapangan> lapangans) {
         final List<String> collect = lapangans.getContent().stream().map(Lapangan::getKode)
