@@ -56,7 +56,7 @@ public class PembayaranController {
     }
 
     public Page<Pembayaran> findAllPembayaranByNoTransaksi(String noTransaksi, Pageable page) {
-        return pembayaranRepository.findAllByNoTransaksi(noTransaksi, page);
+        return pembayaranRepository.findAllByNoTransaksiLike(noTransaksi, page);
     }
 
     public Page<Pembayaran> findAllPembayaran(Pageable page) {

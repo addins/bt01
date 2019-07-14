@@ -365,6 +365,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
         jLabel15.setText("Cari");
 
+        txtfCariBooking.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtfCariBookingKeyTyped(evt);
+            }
+        });
+
         jLabel1.setText("Data booking");
 
         btnKembali.setText("Kembali");
@@ -390,6 +396,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         jScrollPane2.setViewportView(tablePembayaran);
 
         jLabel16.setText("Cari");
+
+        txtfCariPembayaran.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtfCariPembayaranKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -476,6 +488,14 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         clearForm();
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void txtfCariBookingKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtfCariBookingKeyTyped
+        refreshBookingList();
+    }//GEN-LAST:event_txtfCariBookingKeyTyped
+
+    private void txtfCariPembayaranKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtfCariPembayaranKeyTyped
+        refreshPembayaranList();
+    }//GEN-LAST:event_txtfCariPembayaranKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;

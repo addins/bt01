@@ -17,7 +17,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface PembayaranRepository extends JpaRepository<Pembayaran, Long>{
 
-    public Page<Pembayaran> findAllByNoTransaksi(String noTransaksi, Pageable page);
+    public Page<Pembayaran> findAllByNoTransaksiLike(String noTransaksi, Pageable page);
     
     @Query("SELECT coalesce(max(p.id), 0) FROM Pembayaran p")
     public Long getMaxId();

@@ -438,6 +438,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtfCariBooking">
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtfCariBookingKeyTyped"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -484,6 +487,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtfCariPembayaran">
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtfCariPembayaranKeyTyped"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
