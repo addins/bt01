@@ -43,3 +43,9 @@ create table `pembayaran` (
     PRIMARY KEY (id),
     FOREIGN KEY (booking_id) REFERENCES booking(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table `lapangan` (
+    `id` bigint not null AUTO_INCREMENT,
+    `kode` varchar(255) not null,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
