@@ -9,6 +9,7 @@ import org.addin.learns.bt01.domain.RegisMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -17,4 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RegisMemberRepository extends JpaRepository<RegisMember, Long> {
 
     public Page<RegisMember> findAllByKodeLike(String kode, Pageable page);
+    
+    @Query("SELECT coalesce(max(m.id), 0) FROM RegisMember m")
+    public Long getMaxId();
 }

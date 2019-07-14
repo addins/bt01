@@ -9,6 +9,7 @@ import org.addin.learns.bt01.domain.Pembayaran;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -18,4 +19,6 @@ public interface PembayaranRepository extends JpaRepository<Pembayaran, Long>{
 
     public Page<Pembayaran> findAllByNoTransaksi(String noTransaksi, Pageable page);
     
+    @Query("SELECT coalesce(max(p.id), 0) FROM Pembayaran p")
+    public Long getMaxId();
 }
