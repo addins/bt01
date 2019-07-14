@@ -7,6 +7,9 @@ package org.addin.learns.bt01.ui;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -28,9 +31,15 @@ import org.springframework.data.domain.Pageable;
 public class PilihMemberDialog extends javax.swing.JDialog {
 
     private final RegisMemberRepository memberRepository;
-    
+
     private RegisMember selectedMember;
     
+    private DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+            .append(DateTimeFormatter.ISO_OFFSET_DATE)
+            .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+            .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+            .toFormatter();
+
     /**
      * Creates new form PilihMemberDialog
      */
@@ -40,7 +49,7 @@ public class PilihMemberDialog extends javax.swing.JDialog {
         initComponents();
         addSelectionListenerForTable();
     }
-    
+
     private void addSelectionListenerForTable() {
         ListSelectionModel selectionModel = tableMember.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
@@ -52,9 +61,12 @@ public class PilihMemberDialog extends javax.swing.JDialog {
                     Long selectedMemberId = (Long) tableModel.getValueAt(selectedRow, 0);
                     String kodeMember = (String) tableModel.getValueAt(selectedRow, 1);
                     String namaMember = (String) tableModel.getValueAt(selectedRow, 3);
+                    String tglHabisStr = (String) tableModel.getValueAt(selectedRow, 7);
+                    ZonedDateTime tglHabis = ZonedDateTime.parse(tglHabisStr, formatter);
                     selectedMember = new RegisMember()
                             .withKode(kodeMember)
-                            .withnama(namaMember);
+                            .withnama(namaMember)
+                            .withTglHabis(tglHabis);
                     selectedMember.setId(selectedMemberId);
                 } else {
                     selectedMember = null;
@@ -62,7 +74,7 @@ public class PilihMemberDialog extends javax.swing.JDialog {
             }
         });
     }
-    
+
     public RegisMember getSelectedMember() {
         return selectedMember;
     }

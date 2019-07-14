@@ -544,6 +544,7 @@ public class FormBooking extends javax.swing.JFrame {
             selectedMemberId = selectedMember.getId();
             txtfKodeMember.setText(selectedMember.getKode());
             txtfNamaMember.setText(selectedMember.getNama());
+            txtfTglHabis.setText(ofNullable(selectedMember.getTglHabis()).map(ZonedDateTime::toString).orElse(""));
         }
     }//GEN-LAST:event_btnPilihMemberActionPerformed
 
