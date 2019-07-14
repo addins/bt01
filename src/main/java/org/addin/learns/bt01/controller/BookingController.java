@@ -35,19 +35,6 @@ public class BookingController {
     @Autowired
     private LapanganRepository lapanganRepository;
     
-    public static final String[] bookingColumns = new String[] {
-        "ID",
-        "No. Booking",
-        "Tgl Sewa",
-        "Kode Member",
-        "Nama Penyewa",
-        "Kode Lapangan",
-        "Jam Mulai",
-        "Jam Selesai",
-        "DP",
-        "Status Bayar"
-    };
-    
     public Page<Lapangan> findAllLapangan(Pageable pageable) {
         return lapanganRepository.findAll(pageable);
     }

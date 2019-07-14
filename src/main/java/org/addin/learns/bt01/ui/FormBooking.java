@@ -27,7 +27,6 @@ import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.BookingController;
-import static org.addin.learns.bt01.controller.BookingController.bookingColumns;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Lapangan;
 import org.addin.learns.bt01.domain.RegisMember;
@@ -627,7 +626,7 @@ public class FormBooking extends javax.swing.JFrame {
     }
 
     private void updateTableModel(Page<Booking> bookings) {
-        TableModel tableModel = createTableModelFor(bookings);
+        TableModel tableModel = TableModelUtils.createTableModelFor(bookings);
         table.setModel(tableModel);
     }
 
@@ -655,55 +654,7 @@ public class FormBooking extends javax.swing.JFrame {
         combKodeLapanganFilter.setModel(createComboBoxModelFor(lapangans));
     }
 
-    private TableModel createTableModelFor(Page<Booking> bookings) {
-        List<Booking> content = bookings.getContent();
-        return new AbstractTableModel() {
-            @Override
-            public int getRowCount() {
-                return content.size();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return bookingColumns.length;
-            }
-
-            @Override
-            public String getColumnName(int column) {
-                return bookingColumns[column];
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                Booking booking = content.get(rowIndex);
-                final Optional<RegisMember> member = ofNullable(booking.getMember());
-                switch (columnIndex) {
-                    case 0:
-                        return booking.getId();
-                    case 1:
-                        return booking.getNoBooking();
-                    case 2:
-                        return booking.getTglSewa();
-                    case 3:
-                        return member.map(RegisMember::getKode).orElse("");
-                    case 4:
-                        return booking.getNamaPenyewa();
-                    case 5:
-                        return booking.getKodeLapangan();
-                    case 6:
-                        return booking.getJamMulai();
-                    case 7:
-                        return booking.getJamSelesai();
-                    case 8:
-                        return booking.getDp();
-                    case 9:
-                        return booking.getStatusPembayaran();
-                    default:
-                        return "";
-                }
-            }
-        };
-    }
+    
 
     private ComboBoxModel<String> createComboBoxModelFor(Page<Lapangan> lapangans) {
         final List<String> collect = lapangans.getContent().stream().map(Lapangan::getKode)

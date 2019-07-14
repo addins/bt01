@@ -7,10 +7,13 @@ package org.addin.learns.bt01.ui;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.domain.RegisMember;
 import static java.util.Optional.ofNullable;
+import org.addin.learns.bt01.domain.Booking;
+import org.springframework.data.domain.Page;
 
 /**
  *
@@ -27,6 +30,19 @@ public class TableModelUtils {
         "Tgl Daftar",
         "Tgl Habis",
         "Bayar"
+    };
+    
+    public static final String[] bookingColumnNames = new String[] {
+        "ID",
+        "No. Booking",
+        "Tgl Sewa",
+        "Kode Member",
+        "Nama Penyewa",
+        "Kode Lapangan",
+        "Jam Mulai",
+        "Jam Selesai",
+        "DP",
+        "Status Bayar"
     };
     
     public static TableModel createTableModelFor(List<RegisMember> members) {
@@ -99,6 +115,55 @@ public class TableModelUtils {
                                 .orElse(null);
                     case 8:
                         return member.getBayar();
+                    default:
+                        return "";
+                }
+            }
+        };
+    }
+    public static TableModel createTableModelFor(Page<Booking> bookings) {
+        List<Booking> content = bookings.getContent();
+        return new AbstractTableModel() {
+            @Override
+            public int getRowCount() {
+                return content.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return bookingColumnNames.length;
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return bookingColumnNames[column];
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Booking booking = content.get(rowIndex);
+                final Optional<RegisMember> member = ofNullable(booking.getMember());
+                switch (columnIndex) {
+                    case 0:
+                        return booking.getId();
+                    case 1:
+                        return booking.getNoBooking();
+                    case 2:
+                        return booking.getTglSewa();
+                    case 3:
+                        return member.map(RegisMember::getKode).orElse("");
+                    case 4:
+                        return booking.getNamaPenyewa();
+                    case 5:
+                        return booking.getKodeLapangan();
+                    case 6:
+                        return booking.getJamMulai();
+                    case 7:
+                        return booking.getJamSelesai();
+                    case 8:
+                        return booking.getDp();
+                    case 9:
+                        return booking.getStatusPembayaran();
                     default:
                         return "";
                 }
