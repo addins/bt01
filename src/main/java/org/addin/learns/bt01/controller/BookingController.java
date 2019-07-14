@@ -60,7 +60,7 @@ public class BookingController {
         return bookingRepository.save(booking);
     }
 
-    public Page<Booking> findALlBookingByNoBookingAndKodeLapangan(String noBooking, String kodeLapangan, Pageable pageable) {
+    public Page<Booking> findAllBookingByNoBookingAndKodeLapangan(String noBooking, String kodeLapangan, Pageable pageable) {
         return bookingRepository.findAllByNoBookingLikeAndKodeLapanganEquals(noBooking, kodeLapangan, pageable);
     }
 

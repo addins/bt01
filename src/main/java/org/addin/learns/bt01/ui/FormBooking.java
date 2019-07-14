@@ -499,7 +499,9 @@ public class FormBooking extends javax.swing.JFrame {
     }//GEN-LAST:event_radbMemberTidakItemStateChanged
 
     private void txtfCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtfCariKeyTyped
-        refreshBookingList();
+        if (!evt.isActionKey()) {
+            refreshBookingList();
+        }
     }//GEN-LAST:event_txtfCariKeyTyped
 
     private void combKodeLapanganFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combKodeLapanganFilterItemStateChanged
@@ -557,9 +559,9 @@ public class FormBooking extends javax.swing.JFrame {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
                 if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
-                    return bookingController.findALlBookingByNoBookingAndKodeLapangan(keyword, kodeLapanganFilterSelected, Pageable.unpaged());
+                    return bookingController.findAllBookingByNoBookingAndKodeLapangan("%" + keyword + "%", kodeLapanganFilterSelected, Pageable.unpaged());
                 } else if (stringIsNotBlank(keyword)) {
-                    return bookingController.findAllBookingByNoBooking(keyword, Pageable.unpaged());
+                    return bookingController.findAllBookingByNoBooking("%" + keyword + "%", Pageable.unpaged());
                 } else if (kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
                     return bookingController.findAllBookingByKodeLapangan(kodeLapanganFilterSelected, Pageable.unpaged());
                 }
@@ -579,7 +581,7 @@ public class FormBooking extends javax.swing.JFrame {
     }
 
     private boolean kodeLapanganFilterIsSet(String kodeLapangan) {
-        return kodeLapangan != null && !kodeLapangan.isBlank() 
+        return kodeLapangan != null && !kodeLapangan.isBlank()
                 && !kodeLapangan.equals(COMB_SILAHKAN_PILIH_STR);
     }
 
