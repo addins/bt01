@@ -33,6 +33,12 @@ public class PembayaranController {
     @Autowired
     private BookingRepository bookingRepository;
     
+    public Booking getOneById(Long id) {
+        Booking one = bookingRepository.getOne(id);
+        one.getMember();
+        return one;
+    }
+    
     public Page<Booking> findAllBooking(Pageable pageable) {
         return bookingRepository.findAll(pageable);
     }
@@ -71,5 +77,10 @@ public class PembayaranController {
         noTransaksi += "-" + yearStr.substring(yearStr.length() - 2);
         noTransaksi += "-" + String.format("%03d", nextId);
         return noTransaksi;
+    }
+
+    public Pembayaran save(Pembayaran bayaran, Booking selectedBooking) {
+        bookingRepository.save(selectedBooking);
+        return pembayaranRepository.save(bayaran);
     }
 }

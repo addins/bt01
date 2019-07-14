@@ -6,6 +6,16 @@
 package org.addin.learns.bt01.ui;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Optional;
+import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,14 +65,50 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 int selectedRow = tableBooking.getSelectedRow();
                 final TableModel tableModel = tableBooking.getModel();
                 if (selectedRow > -1 && tableModel.getRowCount() > 0) {
-                    Long selectedMemberId = (Long) tableModel.getValueAt(selectedRow, 0);
-                    selectedBooking = new Booking();
-                    selectedBooking.setId(selectedMemberId);
+                    Long selectedBookingId = (Long) tableModel.getValueAt(selectedRow, 0);
+                    if (selectedBookingId != null) {
+                        new SwingWorker<Booking, Void>() {
+                            @Override
+                            protected Booking doInBackground() throws Exception {
+                                return controller.getOneById(selectedBookingId);
+                            }
+
+                            @Override
+                            protected void done() {
+                                try {
+                                    Booking booking = get();
+                                    selectedBooking = booking;
+                                    setFieldsWith(selectedBooking);
+                                } catch (InterruptedException | ExecutionException ex) {
+                                    Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            
+                        }.execute();
+                    }
                 } else {
                     selectedBooking = null;
                 }
             }
         });
+    }
+    
+    private void setFieldsWith(Booking book) {
+        final Optional<LocalTime> jamMulaiOptional = ofNullable(book.getJamMulai());
+        txtfJamMulai.setText(jamMulaiOptional.map(LocalTime::toString).orElse(""));
+        final Optional<LocalTime> jamSelesaiOptional = ofNullable(book.getJamSelesai());
+        txtfJamSelesai.setText(jamSelesaiOptional.map(LocalTime::toString).orElse(""));
+        jamSelesaiOptional.ifPresent((t) -> {
+            long durationInMinutes = MINUTES.between(jamMulaiOptional.orElse(LocalTime.now()), t);
+            txtfDurasi.setText(durationInMinutes + " min");
+        });
+        txtfHarusDibayar.setText("");
+        txtfKodeLapangan.setText(book.getKodeLapangan());
+        txtfNamaPenyewa.setText(book.getMember() == null ? book.getNamaPenyewa() : book.getMember().getNama());
+        txtfNoBooking.setText(book.getNoBooking());
+        txtfStatusMember.setText(book.getMember() == null ? "Tidak" : "Ya");
+        txtfStatusPembayaran.setText(book.getStatusPembayaran());
+        txtfTgl.setText(book.getTglSewa().format(DateTimeFormatter.ISO_DATE));
     }
 
     /**
@@ -99,6 +145,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         btnSimpan = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtfNoTransaksi = new javax.swing.JTextField();
+        btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableBooking = new javax.swing.JTable();
         jLabel15 = new javax.swing.JLabel();
@@ -163,8 +210,6 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel17.setText("Status Pembayaran");
 
-        txtfStatusPembayaran.setEditable(false);
-
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel18.setText("Harus Dibayar");
 
@@ -180,6 +225,13 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         jLabel2.setText("No Transaksi");
 
         txtfNoTransaksi.setEditable(false);
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -214,7 +266,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(42, 42, 42)
-                                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(43, 43, 43)
+                                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -238,6 +292,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                                     .addComponent(txtfNoTransaksi))))
                         .addGap(0, 43, Short.MAX_VALUE))))
         );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnPrint, btnReset});
+
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -286,9 +343,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReset))
                 .addGap(33, 33, 33))
         );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnPrint, btnReset});
 
         tableBooking.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -409,12 +469,18 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         String noTransaksi = txtfNoTransaksi.getText();
         String harusDibayar = txtfHarusDibayar.getText();
-        saveNewPembayaran(selectedBooking, noTransaksi, harusDibayar);
+        String statusBayar = txtfStatusPembayaran.getText();
+        saveNewPembayaran(selectedBooking, noTransaksi, harusDibayar, statusBayar);
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnResetActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
     private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
@@ -452,9 +518,8 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void clearForm() {
+        tableBooking.clearSelection();
         selectedBooking = null;
-        txtfCariBooking.setText("");
-        txtfCariPembayaran.setText("");
         txtfDurasi.setText("");
         txtfHarusDibayar.setText("");
         txtfJamMulai.setText("");
@@ -531,7 +596,8 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         tablePembayaran.setModel(tableModel);
     }
 
-    private void saveNewPembayaran(Booking selectedBooking, String noTransaksi, String harusDibayar) {
+    private void saveNewPembayaran(Booking selectedBooking, String noTransaksi, String harusDibayar, String statusBayar) {
+        selectedBooking.setStatusPembayaran(statusBayar);
         Pembayaran bayaran = new Pembayaran()
                 .withBooking(selectedBooking)
                 .withNoTransaksi(noTransaksi)
@@ -541,7 +607,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         new SwingWorker<Pembayaran, Void>() {
             @Override
             protected Pembayaran doInBackground() throws Exception {
-                return controller.save(bayaran);
+                return controller.save(bayaran, selectedBooking);
             }
 
             @Override
