@@ -42,6 +42,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class FormBooking extends javax.swing.JFrame {
 
+    private static final String COMB_SILAHKAN_PILIH_STR = "-- silahkan pilih --";
+
     @Autowired
     private MenuUtama menuUtama;
 
@@ -60,6 +62,11 @@ public class FormBooking extends javax.swing.JFrame {
     public FormBooking() {
         initComponents();
         groupIsMemberRadioButtons();
+        setinitialRadbMemberValue();
+    }
+
+    private void setinitialRadbMemberValue() {
+        radbMemberTidak.setSelected(true);
     }
 
     private void groupIsMemberRadioButtons() {
@@ -173,7 +180,6 @@ public class FormBooking extends javax.swing.JFrame {
 
         radbMemberYa.setText("Ya");
 
-        radbMemberTidak.setSelected(true);
         radbMemberTidak.setText("Tidak");
         radbMemberTidak.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -217,24 +223,25 @@ public class FormBooking extends javax.swing.JFrame {
                             .addComponent(txtfTglHabis, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfStatusPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfDp, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(combKodeLapangan, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNamaPenyewa, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNamaMember, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfKodeMember, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(datcTglSewa, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfNoBooking, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(spinJamMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(28, 28, 28)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(spinMinMulai, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                                    .addComponent(spinMinSelesai)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(radbMemberYa)
                                 .addGap(18, 18, 18)
-                                .addComponent(radbMemberTidak)))))
+                                .addComponent(radbMemberTidak))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(combKodeLapangan, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(spinJamMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(28, 28, 28)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(spinMinMulai, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                                        .addComponent(spinMinSelesai)))))))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -279,10 +286,11 @@ public class FormBooking extends javax.swing.JFrame {
                     .addComponent(spinJamMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(spinMinMulai, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spinMinSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spinMinSelesai, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(spinJamSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtfDp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -311,10 +319,20 @@ public class FormBooking extends javax.swing.JFrame {
 
         jLabel15.setText("Cari");
 
+        txtfCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtfCariKeyTyped(evt);
+            }
+        });
+
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel16.setText("Kode Lapangan");
 
-        combKodeLapanganFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        combKodeLapanganFilter.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combKodeLapanganFilterItemStateChanged(evt);
+            }
+        });
 
         btnKembali.setText("Kembali");
         btnKembali.addActionListener(new java.awt.event.ActionListener() {
@@ -339,9 +357,9 @@ public class FormBooking extends javax.swing.JFrame {
                             .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel16))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(combKodeLapanganFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtfCari, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtfCari, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                            .addComponent(combKodeLapanganFilter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(231, 231, 231))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -480,6 +498,14 @@ public class FormBooking extends javax.swing.JFrame {
 
     }//GEN-LAST:event_radbMemberTidakItemStateChanged
 
+    private void txtfCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtfCariKeyTyped
+        refreshBookingList();
+    }//GEN-LAST:event_txtfCariKeyTyped
+
+    private void combKodeLapanganFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combKodeLapanganFilterItemStateChanged
+        refreshBookingList();
+    }//GEN-LAST:event_combKodeLapanganFilterItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
@@ -523,9 +549,20 @@ public class FormBooking extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void refreshBookingList() {
+
+        String keyword = txtfCari.getText();
+        String kodeLapanganFilterSelected = (String) combKodeLapanganFilter.getSelectedItem();
+
         new SwingWorker<Page<Booking>, Void>() {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
+                if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
+                    return bookingController.findALlBookingByNoBookingAndKodeLapangan(keyword, kodeLapanganFilterSelected, Pageable.unpaged());
+                } else if (stringIsNotBlank(keyword)) {
+                    return bookingController.findAllBookingByNoBooking(keyword, Pageable.unpaged());
+                } else if (kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
+                    return bookingController.findAllBookingByKodeLapangan(kodeLapanganFilterSelected, Pageable.unpaged());
+                }
                 return bookingController.findAllBooking(Pageable.unpaged());
             }
 
@@ -539,6 +576,15 @@ public class FormBooking extends javax.swing.JFrame {
                 }
             }
         }.execute();
+    }
+
+    private boolean kodeLapanganFilterIsSet(String kodeLapangan) {
+        return kodeLapangan != null && !kodeLapangan.isBlank() 
+                && !kodeLapangan.equals(COMB_SILAHKAN_PILIH_STR);
+    }
+
+    private boolean stringIsNotBlank(String keyword) {
+        return keyword != null && !keyword.isBlank();
     }
 
     private void updateTableModel(Page<Booking> bookings) {
@@ -623,6 +669,7 @@ public class FormBooking extends javax.swing.JFrame {
     private ComboBoxModel<String> createComboBoxModelFor(Page<Lapangan> lapangans) {
         final List<String> collect = lapangans.getContent().stream().map(Lapangan::getKode)
                 .collect(Collectors.toList());
+        collect.add(0, COMB_SILAHKAN_PILIH_STR);
         ComboBoxModel<String> model = new DefaultComboBoxModel<>(collect.toArray(new String[]{}));
         return model;
     }

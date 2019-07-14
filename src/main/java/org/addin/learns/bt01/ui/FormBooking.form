@@ -41,9 +41,9 @@
                           <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="combKodeLapanganFilter" min="-2" max="-2" attributes="0"/>
-                          <Component id="txtfCari" min="-2" pref="230" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="txtfCari" pref="230" max="32767" attributes="0"/>
+                          <Component id="combKodeLapanganFilter" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="231" max="-2" attributes="0"/>
                   </Group>
@@ -146,27 +146,29 @@
                               <Component id="txtfTglHabis" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfStatusPembayaran" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfDp" min="-2" pref="230" max="-2" attributes="0"/>
-                              <Component id="combKodeLapangan" alignment="0" min="-2" pref="65" max="-2" attributes="0"/>
                               <Component id="txtfNamaPenyewa" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfNamaMember" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfKodeMember" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="datcTglSewa" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
                               <Component id="txtfNoBooking" alignment="0" min="-2" pref="230" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="spinJamMulai" alignment="0" min="-2" pref="41" max="-2" attributes="0"/>
-                                      <Component id="spinJamSelesai" alignment="0" min="-2" pref="41" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="spinMinMulai" pref="41" max="32767" attributes="0"/>
-                                      <Component id="spinMinSelesai" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
                               <Group type="102" attributes="0">
                                   <Component id="radbMemberYa" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="radbMemberTidak" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="combKodeLapangan" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="spinJamMulai" alignment="0" min="-2" pref="41" max="-2" attributes="0"/>
+                                          <Component id="spinJamSelesai" alignment="0" min="-2" pref="41" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="spinMinMulai" pref="41" max="32767" attributes="0"/>
+                                          <Component id="spinMinSelesai" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
@@ -226,10 +228,12 @@
                       <Component id="spinMinMulai" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="spinJamSelesai" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="spinMinSelesai" alignment="1" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spinJamSelesai" alignment="3" min="-2" pref="29" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -402,7 +406,6 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="radbMemberTidak">
           <Properties>
-            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Tidak"/>
           </Properties>
           <Events>
@@ -438,6 +441,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtfCari">
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtfCariKeyTyped"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel16">
       <Properties>
@@ -450,14 +456,12 @@
     <Component class="javax.swing.JComboBox" name="combKodeLapanganFilter">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="combKodeLapanganFilterItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>

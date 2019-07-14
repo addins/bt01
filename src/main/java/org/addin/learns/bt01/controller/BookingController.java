@@ -59,4 +59,16 @@ public class BookingController {
     public Booking save(Booking booking) {
         return bookingRepository.save(booking);
     }
+
+    public Page<Booking> findALlBookingByNoBookingAndKodeLapangan(String noBooking, String kodeLapangan, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingLikeAndKodeLapanganEquals(noBooking, kodeLapangan, pageable);
+    }
+
+    public Page<Booking> findAllBookingByNoBooking(String noBooking, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingLike(noBooking, pageable);
+    }
+
+    public Page<Booking> findAllBookingByKodeLapangan(String kodeLapangan, Pageable pageable) {
+        return bookingRepository.findAllByKodeLapanganEquals(kodeLapangan, pageable);
+    }
 }
