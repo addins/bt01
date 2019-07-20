@@ -6,17 +6,18 @@
 package org.addin.learns.bt01.ui;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+
 import static java.time.temporal.ChronoUnit.MINUTES;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
+
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
+import static org.addin.learns.bt01.controller.PembayaranController.BELUM_LUNAS;
+
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ListSelectionModel;
@@ -27,6 +28,7 @@ import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.PembayaranController;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Pembayaran;
+import org.addin.learns.bt01.domain.RegisMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -94,15 +96,27 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     }
     
     private void setFieldsWith(Booking book) {
+        AtomicLong durationInMinutes = new AtomicLong();
+        BigDecimal potonganMember = BigDecimal.valueOf(20000);
+        BigDecimal tarifPerMenit = BigDecimal.valueOf(1000);
+
         final Optional<LocalTime> jamMulaiOptional = ofNullable(book.getJamMulai());
         txtfJamMulai.setText(jamMulaiOptional.map(LocalTime::toString).orElse(""));
         final Optional<LocalTime> jamSelesaiOptional = ofNullable(book.getJamSelesai());
         txtfJamSelesai.setText(jamSelesaiOptional.map(LocalTime::toString).orElse(""));
         jamSelesaiOptional.ifPresent((t) -> {
-            long durationInMinutes = MINUTES.between(jamMulaiOptional.orElse(LocalTime.now()), t);
+            durationInMinutes.set(MINUTES.between(jamMulaiOptional.orElse(LocalTime.now()), t));
             txtfDurasi.setText(durationInMinutes + " min");
         });
-        txtfHarusDibayar.setText("");
+        RegisMember member = book.getMember();
+
+        BigDecimal jumlahTagihan = tarifPerMenit.multiply(BigDecimal.valueOf(durationInMinutes.longValue()));
+
+        if(member != null) {
+            jumlahTagihan = jumlahTagihan.subtract(potonganMember);
+        }
+
+        txtfHarusDibayar.setText(jumlahTagihan.toString());
         txtfKodeLapangan.setText(book.getKodeLapangan());
         txtfNamaPenyewa.setText(book.getMember() == null ? book.getNamaPenyewa() : book.getMember().getNama());
         txtfNoBooking.setText(book.getNoBooking());
@@ -561,9 +575,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
                 if (stringIsNotBlank(keyword)) {
-                    return controller.findAllBookingByNoBooking("%" + keyword + "%", Pageable.unpaged());
+                    return controller.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", BELUM_LUNAS,  Pageable.unpaged());
                 }
-                return controller.findAllBooking(Pageable.unpaged());
+                return controller.findAllBookingAndStatusPembayaran(BELUM_LUNAS, Pageable.unpaged());
             }
 
             @Override
