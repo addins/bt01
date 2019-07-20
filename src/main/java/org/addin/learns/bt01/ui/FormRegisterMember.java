@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+
+import static javax.swing.JOptionPane.*;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import javax.swing.ListSelectionModel;
@@ -398,6 +400,10 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     }
 
+    public void showAlert() {
+        showMessageDialog(null, "Harap isi semua data member");
+    }
+
     private void createAndSaveMember(Long id, String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
         RegisMember member = new RegisMember()
                 .withKode(kode)
@@ -477,7 +483,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         if (selectedMemberId != null) {
-            int confirmedResult = showConfirmDialog(rootPane, "Yakin hapus data terpilih?", "Hapus", JOptionPane.YES_NO_OPTION);
+            int confirmedResult = showConfirmDialog(rootPane, "Yakin hapus data terpilih?", "Hapus", YES_NO_OPTION);
             if (YES_OPTION == confirmedResult) {
                 deleteSelectedMember();
             }
@@ -548,8 +554,14 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
         String bayar = txtfBayar.getText();
 
-        if (kode == null || kode.isEmpty()) {
-            // kode should not be empty.
+        if (kode == null || kode.isEmpty()
+                || noKtp == null || noKtp.isEmpty()
+                || nama == null || nama.isEmpty()
+                || alamat == null || alamat.isEmpty()
+                || tglDaftar == null || tglHabis == null
+                || bayar == null || bayar.isEmpty()
+        ) {
+            showAlert();
             return;
         }
 
