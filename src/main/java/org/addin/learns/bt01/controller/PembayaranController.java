@@ -27,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class PembayaranController {
 
+    public static String LUNAS = "LUNAS";
+    public static String BELUM_LUNAS = "BELUM_LUNAS";
+
     @Autowired
     private PembayaranRepository pembayaranRepository;
     
@@ -82,5 +85,13 @@ public class PembayaranController {
     public Pembayaran save(Pembayaran bayaran, Booking selectedBooking) {
         bookingRepository.save(selectedBooking);
         return pembayaranRepository.save(bayaran);
+    }
+
+    public Page<Booking> findAllBookingAndStatusPembayaran(String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByStatusPembayaran(statusPembayaran, pageable);
+    }
+
+    public Page<Booking> findAllBookingByNoBookingAndStatusPembayaran(String nomorBooking, String statusBayar, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingAndStatusPembayaran(nomorBooking, statusBayar, pageable);
     }
 }
