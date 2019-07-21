@@ -5,14 +5,26 @@
  */
 package org.addin.learns.bt01.controller;
 
+import com.itextpdf.text.DocumentException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
+import org.addin.learns.bt01.ui.FormRegisterMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /**
  *
@@ -58,5 +70,35 @@ public class RegisMemberController {
 
     public void delete(Long id) {
         memberRepository.deleteById(id);
+    }
+
+    public void cetakKartuMemberPdf(String nama, String tglHabis) {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML");
+        
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+        
+        Context context = new Context();
+        context.setVariable("nama", nama);
+        context.setVariable("tglHabis", tglHabis);
+        
+        String html = templateEngine.process("templates/kartu-member", context);
+        
+        try {
+            OutputStream os = new FileOutputStream("kartu-member.pdf");
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.setDocumentFromString(html);
+            renderer.layout();
+            renderer.createPDF(os);
+            os.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
