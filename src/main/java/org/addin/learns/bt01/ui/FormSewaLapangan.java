@@ -96,6 +96,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     }
     
     private void setFieldsWith(Booking book) {
+        BigDecimal bookingFee = selectedBooking.getDp();
         AtomicLong durationInMinutes = new AtomicLong();
         BigDecimal potonganMember = BigDecimal.valueOf(20000);
         BigDecimal tarifPerMenit = BigDecimal.valueOf(1000);
@@ -110,7 +111,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         });
         RegisMember member = book.getMember();
 
-        BigDecimal jumlahTagihan = tarifPerMenit.multiply(BigDecimal.valueOf(durationInMinutes.longValue()));
+        BigDecimal jumlahTagihan = tarifPerMenit.multiply(BigDecimal.valueOf(durationInMinutes.longValue())).subtract(bookingFee);
 
         if(member != null) {
             jumlahTagihan = jumlahTagihan.subtract(potonganMember);
@@ -226,6 +227,8 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel18.setText("Harus Dibayar");
+
+        txtfHarusDibayar.setEditable(false);
 
         btnPrint.setText("Print");
 
@@ -495,7 +498,8 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         String noTransaksi = txtfNoTransaksi.getText();
         String harusDibayar = txtfHarusDibayar.getText();
-        String statusBayar = txtfStatusPembayaran.getText();
+//        String statusBayar = txtfStatusPembayaran.getText();
+        String statusBayar = "LUNAS";
         saveNewPembayaran(selectedBooking, noTransaksi, harusDibayar, statusBayar);
     }//GEN-LAST:event_btnSimpanActionPerformed
 

@@ -5,6 +5,8 @@
  */
 package org.addin.learns.bt01.repository;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
 import org.addin.learns.bt01.domain.Pembayaran;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +23,6 @@ public interface PembayaranRepository extends JpaRepository<Pembayaran, Long>{
     
     @Query("SELECT coalesce(max(p.id), 0) FROM Pembayaran p")
     public Long getMaxId();
+
+    public Page<Pembayaran> findAllByBookingTglSewaBetween(ZonedDateTime dateFrom, ZonedDateTime dateTo, Pageable unpaged);
 }

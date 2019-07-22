@@ -3,23 +3,20 @@ package org.addin.learns.bt01.ui;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 import static javax.swing.JOptionPane.*;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
+
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.RegisMemberController;
 import org.addin.learns.bt01.domain.RegisMember;
@@ -27,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -397,7 +393,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
         txtfBayar.setText("");
         datcTglDaftar.setCalendar(null);
         datcTglHabis.setCalendar(null);
-
     }
 
     public void showAlert() {
@@ -531,6 +526,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
