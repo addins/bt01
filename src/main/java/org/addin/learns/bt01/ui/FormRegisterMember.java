@@ -1,13 +1,24 @@
 package org.addin.learns.bt01.ui;
 
+import com.itextpdf.text.DocumentException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 
 import static javax.swing.JOptionPane.*;
 import static javax.swing.JOptionPane.YES_OPTION;
@@ -24,6 +35,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -396,7 +411,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }
 
     public void showAlert() {
-        showMessageDialog(null, "Harap isi semua data member");
+        showMessageDialog(rootPane, "Harap isi semua data member");
     }
 
     private void createAndSaveMember(Long id, String kode, String noKtp, String nama, String alamat, String noTelp, ZonedDateTime tglDaftar, ZonedDateTime tglHabis, String bayar) {
@@ -525,7 +540,23 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        // TODO add your handling code here:
+        
+        if (selectedMemberId != null) {
+            editSelectedMember();
+        }
+        
+        String nama = txtfNama.getText();
+        Instant instant = ofNullable(datcTglHabis.getDate())
+                .map(Date::toInstant)
+                .orElse(Instant.EPOCH);
+        ZonedDateTime ofInstant = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+        String tglHabis = ofInstant.format(DateTimeFormatter.ISO_DATE);
+        
+        if (nama.isBlank() || tglHabis.isBlank()) {
+            showMessageDialog(rootPane, "Pilih member untuk print");
+        }
+        
+        memberController.cetakKartuMemberPdf(nama, tglHabis);
         
     }//GEN-LAST:event_btnPrintActionPerformed
 
