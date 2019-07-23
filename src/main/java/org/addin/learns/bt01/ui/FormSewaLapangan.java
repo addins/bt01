@@ -581,7 +581,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 if (stringIsNotBlank(keyword)) {
                     return controller.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", BELUM_LUNAS,  Pageable.unpaged());
                 }
-                return controller.findAllBookingAndStatusPembayaran(BELUM_LUNAS, Pageable.unpaged());
+                return controller.findAllBookingByStatusPembayaran(BELUM_LUNAS, Pageable.unpaged());
             }
 
             @Override

@@ -90,7 +90,7 @@ public class PembayaranController {
         return pembayaranRepository.save(bayaran);
     }
 
-    public Page<Booking> findAllBookingAndStatusPembayaran(String statusPembayaran, Pageable pageable) {
+    public Page<Booking> findAllBookingByStatusPembayaran(String statusPembayaran, Pageable pageable) {
         return bookingRepository.findAllByStatusPembayaran(statusPembayaran, pageable);
     }
 
