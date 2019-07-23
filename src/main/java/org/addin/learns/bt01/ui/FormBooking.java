@@ -57,7 +57,7 @@ public class FormBooking extends javax.swing.JFrame {
 
     private Long selectedMemberId;
 
-    private Boolean saving = false;
+    private boolean saving = false;
 
     /**
      * Creates new form from_booking
@@ -608,13 +608,13 @@ public class FormBooking extends javax.swing.JFrame {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
                 if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
-                    return bookingController.findAllBookingByNoBookingAndKodeLapangan("%" + keyword + "%", kodeLapanganFilterSelected, Pageable.unpaged());
+                      return bookingController.findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran("%" + keyword + "%", kodeLapanganFilterSelected, "BELUM_LUNAS",Pageable.unpaged());
                 } else if (stringIsNotBlank(keyword)) {
-                    return bookingController.findAllBookingByNoBooking("%" + keyword + "%", Pageable.unpaged());
+                      return bookingController.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", "BELUM_LUNAS", Pageable.unpaged());
                 } else if (kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
-                    return bookingController.findAllBookingByKodeLapangan(kodeLapanganFilterSelected, Pageable.unpaged());
+                    return bookingController.findAllBookingByKodeLapanganAndStatusPembayaran(kodeLapanganFilterSelected, "BELUM_LUNAS", Pageable.unpaged());
                 }
-                return bookingController.findAllBooking(Pageable.unpaged());
+                return bookingController.findAllBookingByStatusPembayaran("BELUM_LUNAS", Pageable.unpaged());
             }
 
             @Override
