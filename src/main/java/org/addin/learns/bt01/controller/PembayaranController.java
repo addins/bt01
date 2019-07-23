@@ -6,6 +6,9 @@
 package org.addin.learns.bt01.controller;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.Booking;
@@ -87,11 +90,17 @@ public class PembayaranController {
         return pembayaranRepository.save(bayaran);
     }
 
-    public Page<Booking> findAllBookingAndStatusPembayaran(String statusPembayaran, Pageable pageable) {
+    public Page<Booking> findAllBookingByStatusPembayaran(String statusPembayaran, Pageable pageable) {
         return bookingRepository.findAllByStatusPembayaran(statusPembayaran, pageable);
     }
 
     public Page<Booking> findAllBookingByNoBookingAndStatusPembayaran(String nomorBooking, String statusBayar, Pageable pageable) {
         return bookingRepository.findAllByNoBookingAndStatusPembayaran(nomorBooking, statusBayar, pageable);
+    }
+
+    public Page<Pembayaran> findAllPembayaran(Date dateFrom, Date dateTo, Pageable unpaged) {
+        ZonedDateTime startFrom = ZonedDateTime.ofInstant(dateFrom.toInstant(), ZoneId.systemDefault());
+        ZonedDateTime startTo = ZonedDateTime.ofInstant(dateTo.toInstant(), ZoneId.systemDefault());
+        return pembayaranRepository.findAllByBookingTglSewaBetween(startFrom, startTo, unpaged);
     }
 }

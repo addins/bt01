@@ -67,4 +67,20 @@ public class BookingController {
         Long maxBookingId = findMaxBookingId();
         return "MB-" +  String.format("%03d", maxBookingId + 1);
     }
+
+    public Page<Booking> findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran(String noBooking, String kodeLapangan, String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingLikeAndKodeLapanganEqualsAndStatusPembayaran(noBooking, kodeLapangan, statusPembayaran, pageable);
+    }
+
+    public Page<Booking> findAllBookingByNoBookingAndStatusPembayaran(String noBooking, String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingLike(noBooking, statusPembayaran, pageable);
+    }
+
+    public Page<Booking> findAllBookingByKodeLapanganAndStatusPembayaran(String kodeLapangan, String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByKodeLapanganEquals(kodeLapangan, statusPembayaran, pageable);
+    }
+
+    public Page<Booking> findAllBookingByStatusPembayaran(String statusPembayaran, Pageable unpaged) {
+        return bookingRepository.findAllByStatusPembayaran(statusPembayaran, unpaged);
+    }
 }

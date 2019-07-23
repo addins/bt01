@@ -23,6 +23,7 @@ import javax.swing.JDialog;
 import static javax.swing.JOptionPane.*;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
+
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -407,7 +408,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
         txtfBayar.setText("");
         datcTglDaftar.setCalendar(null);
         datcTglHabis.setCalendar(null);
-
     }
 
     public void showAlert() {

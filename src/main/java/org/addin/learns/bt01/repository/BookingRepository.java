@@ -26,7 +26,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
     @Query("SELECT coalesce(max(b.id), 0) FROM Booking b")
     public Long getMaxId();
 
-    Page<Booking> findAllByStatusPembayaran(String statusPembayaran, Pageable pageable);
+    public Page<Booking> findAllByStatusPembayaran(String statusPembayaran, Pageable pageable);
 
-    Page<Booking> findAllByNoBookingAndStatusPembayaran(String nomorBooking, String statusBayar, Pageable pageable);
+    public Page<Booking> findAllByNoBookingAndStatusPembayaran(String nomorBooking, String statusBayar, Pageable pageable);
+
+    public Page<Booking> findAllByNoBookingLikeAndKodeLapanganEqualsAndStatusPembayaran(String noBooking, String kodeLapangan, String statusPembayaran, Pageable pageable);
+
+    public Page<Booking> findAllByNoBookingLike(String noBooking, String statusPembayaran, Pageable pageable);
+
+    public Page<Booking> findAllByKodeLapanganEquals(String kodeLapangan, String statusPembayaran, Pageable pageable);
 }
