@@ -35,11 +35,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="btnEdit" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPrint" linkSize="2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnHapus" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnEdit" linkSize="2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnKembali" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnHapus" linkSize="2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="btnKembali" linkSize="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jScrollPane1" min="-2" pref="728" max="-2" attributes="0"/>
                       </Group>
@@ -82,7 +84,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="btnHapus" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
-                              <Component id="btnEdit" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                              <Component id="btnEdit" linkSize="1" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                              <Component id="btnPrint" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="btnKembali" min="-2" pref="43" max="-2" attributes="0"/>
                       </Group>
@@ -114,11 +117,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnSimpan" min="-2" pref="90" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnPrint" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnSimpan" linkSize="3" min="-2" pref="90" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnReset" min="-2" pref="67" max="-2" attributes="0"/>
+                          <Component id="btnReset" linkSize="3" min="-2" pref="67" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
@@ -213,10 +214,9 @@
                       <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="29" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="btnSimpan" pref="43" max="32767" attributes="0"/>
-                      <Component id="btnPrint" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnReset" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btnSimpan" linkSize="4" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="btnReset" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
               </Group>
@@ -310,14 +310,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSimpanActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnPrint">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Print"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPrintActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnReset">
@@ -439,6 +431,7 @@
     <Component class="javax.swing.JButton" name="btnEdit">
       <Properties>
         <Property name="text" type="java.lang.String" value="Edit"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditActionPerformed"/>
@@ -447,9 +440,19 @@
     <Component class="javax.swing.JButton" name="btnHapus">
       <Properties>
         <Property name="text" type="java.lang.String" value="Hapus"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHapusActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnPrint">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Print"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPrintActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
