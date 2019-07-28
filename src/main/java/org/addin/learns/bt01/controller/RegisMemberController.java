@@ -8,6 +8,7 @@ package org.addin.learns.bt01.controller;
 import com.itextpdf.text.DocumentException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +80,19 @@ public class RegisMemberController {
         Context context = new Context();
         context.setVariable("nama", nama);
         context.setVariable("tglHabis", tglHabis);
+
+        final String pdfFilePath = "kartu-member.pdf";
+        cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);
+    }
+
+    public void cetakKartuMemberPdf(Long selectedMemberId) throws IOException, FileNotFoundException, DocumentException {
+        RegisMember one = findOne(selectedMemberId);
+        
+        Context context = new Context();
+        context.setVariable("kode", one.getKode());
+        context.setVariable("nama", one.getNama());
+        context.setVariable("tglDaftar", one.getTglDaftar().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        context.setVariable("tglHabis", one.getTglHabis().format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         final String pdfFilePath = "kartu-member.pdf";
         cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);

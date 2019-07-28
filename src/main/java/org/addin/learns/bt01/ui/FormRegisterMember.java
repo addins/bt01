@@ -560,7 +560,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
             @Override
             protected Boolean doInBackground() throws Exception {
                 try {
-                    memberController.cetakKartuMemberPdf(nama, tglHabis);
+                    memberController.cetakKartuMemberPdf(selectedMemberId);
                     return true;
                 } catch (Exception e) {
                     Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, e);
