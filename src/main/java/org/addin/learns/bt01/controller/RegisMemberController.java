@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.addin.learns.bt01.ui.FormRegisterMember;
+import org.addin.learns.bt01.utils.CetakPdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,9 @@ public class RegisMemberController {
     
     @Autowired
     private RegisMemberRepository memberRepository;
+    
+    @Autowired
+    private CetakPdfService cetakPdfService;
     
     public Page<RegisMember> findAllMember(Pageable page) {
         return memberRepository.findAll(page);
@@ -73,31 +77,17 @@ public class RegisMemberController {
     }
 
     public void cetakKartuMemberPdf(String nama, String tglHabis) {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode("HTML");
-        
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-        
+                
         Context context = new Context();
         context.setVariable("nama", nama);
         context.setVariable("tglHabis", tglHabis);
         
-        String html = templateEngine.process("templates/kartu-member", context);
-        
+        final String pdfFilePath = "kartu-member.pdf";
         try {
-            OutputStream os = new FileOutputStream("kartu-member.pdf");
-            ITextRenderer renderer = new ITextRenderer();
-            renderer.setDocumentFromString(html);
-            renderer.layout();
-            renderer.createPDF(os);
-            os.close();
+            cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException ex) {
-            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (DocumentException | IOException ex) {
             Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
