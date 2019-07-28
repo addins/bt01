@@ -133,7 +133,7 @@ public class FormBooking extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(null), null));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Booking Lapangan"));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("No Booking");
@@ -506,8 +506,8 @@ public class FormBooking extends javax.swing.JFrame {
         spinMinMulai.setValue(0);
         spinJamSelesai.setValue(0);
         spinMinSelesai.setValue(0);
-        txtfDp.setText("20000");
-        txtfStatusPembayaran.setText("BELUM_LUNAS");
+        txtfDp.setText("");
+        txtfStatusPembayaran.setText("");
 
         txtfKodeMember.setText("");
         txtfNamaMember.setText("");
@@ -553,9 +553,19 @@ public class FormBooking extends javax.swing.JFrame {
             txtfKodeMember.setText(selectedMember.getKode());
             txtfNamaMember.setText(selectedMember.getNama());
             txtfTglHabis.setText(ofNullable(selectedMember.getTglHabis()).map(ZonedDateTime::toString).orElse(""));
+
+            txtfDp.setText("20000");
+            txtfStatusPembayaran.setText("BELUM_LUNAS");
         }
     }//GEN-LAST:event_btnPilihMemberActionPerformed
 
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b); //To change body of generated methods, choose Tools | Templates.
+        if (false == b) {
+            clearForm();
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
@@ -608,9 +618,9 @@ public class FormBooking extends javax.swing.JFrame {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
                 if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
-                      return bookingController.findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran("%" + keyword + "%", kodeLapanganFilterSelected, "BELUM_LUNAS",Pageable.unpaged());
+                    return bookingController.findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran("%" + keyword + "%", kodeLapanganFilterSelected, "BELUM_LUNAS", Pageable.unpaged());
                 } else if (stringIsNotBlank(keyword)) {
-                      return bookingController.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", "BELUM_LUNAS", Pageable.unpaged());
+                    return bookingController.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", "BELUM_LUNAS", Pageable.unpaged());
                 } else if (kodeLapanganFilterIsSet(kodeLapanganFilterSelected)) {
                     return bookingController.findAllBookingByKodeLapanganAndStatusPembayaran(kodeLapanganFilterSelected, "BELUM_LUNAS", Pageable.unpaged());
                 }
@@ -723,7 +733,7 @@ public class FormBooking extends javax.swing.JFrame {
                     Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
         }.execute();
     }
 }
