@@ -581,7 +581,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                     if (success) {
                         showMessageDialog(rootPane, "Cetak sukses");
                     } else {
-                        showMessageDialog(rootPane, "Cetak gagal");
+                        showMessageDialog(rootPane, "Cetak gagal", "Cetak Gagal", ERROR_MESSAGE);
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
