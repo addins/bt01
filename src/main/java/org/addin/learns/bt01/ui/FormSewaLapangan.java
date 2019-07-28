@@ -231,6 +231,11 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         txtfHarusDibayar.setEditable(false);
 
         btnPrint.setText("Print");
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         btnSimpan.setText("Simpan");
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
@@ -514,6 +519,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private void txtfCariPembayaranKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtfCariPembayaranKeyTyped
         refreshPembayaranList();
     }//GEN-LAST:event_txtfCariPembayaranKeyTyped
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        String noTransaksi = txtfNoTransaksi.getText();
+        btnSimpanActionPerformed(evt);
+        controller.cetakBuktiBayar(noTransaksi);
+    }//GEN-LAST:event_btnPrintActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;

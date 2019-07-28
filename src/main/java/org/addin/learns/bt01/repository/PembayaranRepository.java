@@ -25,4 +25,6 @@ public interface PembayaranRepository extends JpaRepository<Pembayaran, Long>{
     public Long getMaxId();
 
     public Page<Pembayaran> findAllByBookingTglSewaBetween(ZonedDateTime dateFrom, ZonedDateTime dateTo, Pageable unpaged);
+
+    public Pembayaran findOneByNoTransaksi(String noTransaksi);
 }

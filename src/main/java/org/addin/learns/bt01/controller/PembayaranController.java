@@ -5,21 +5,32 @@
  */
 package org.addin.learns.bt01.controller;
 
+import com.itextpdf.text.DocumentException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Pembayaran;
 import org.addin.learns.bt01.repository.BookingRepository;
 import org.addin.learns.bt01.repository.PembayaranRepository;
+import org.addin.learns.bt01.ui.FormRegisterMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /**
  *
@@ -102,5 +113,12 @@ public class PembayaranController {
         ZonedDateTime startFrom = ZonedDateTime.ofInstant(dateFrom.toInstant(), ZoneId.systemDefault());
         ZonedDateTime startTo = ZonedDateTime.ofInstant(dateTo.toInstant(), ZoneId.systemDefault());
         return pembayaranRepository.findAllByBookingTglSewaBetween(startFrom, startTo, unpaged);
+    }
+
+    public void cetakBuktiBayar(String noTransaksi) {
+        Pembayaran bayaran = pembayaranRepository.findOneByNoTransaksi(noTransaksi);
+        if (bayaran != null) {
+            throw new UnsupportedOperationException("not yet implemented");
+        }
     }
 }
