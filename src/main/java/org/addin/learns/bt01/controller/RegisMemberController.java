@@ -7,11 +7,12 @@ package org.addin.learns.bt01.controller;
 
 import com.itextpdf.text.DocumentException;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
@@ -22,10 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /**
  *
@@ -35,21 +33,21 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 @Transactional
 @Component
 public class RegisMemberController {
-    
+
     @Autowired
     private RegisMemberRepository memberRepository;
-    
+
     @Autowired
     private CetakPdfService cetakPdfService;
-    
+
     public Page<RegisMember> findAllMember(Pageable page) {
         return memberRepository.findAll(page);
     }
-    
+
     public Page<RegisMember> findAllMemberByKodeLike(String kode, Pageable page) {
         return memberRepository.findAllByKodeLike(kode, page);
     }
-    
+
     public RegisMember findOne(Long id) {
         final RegisMember member = memberRepository.getOne(id);
         member.getId();
@@ -63,11 +61,11 @@ public class RegisMemberController {
         member.getBayar();
         return member;
     }
-    
+
     public RegisMember save(RegisMember member) {
         return memberRepository.save(member);
     }
-    
+
     public void delete(RegisMember member) {
         memberRepository.delete(member);
     }
@@ -76,19 +74,12 @@ public class RegisMemberController {
         memberRepository.deleteById(id);
     }
 
-    public void cetakKartuMemberPdf(String nama, String tglHabis) {
-                
+    public void cetakKartuMemberPdf(String nama, String tglHabis) throws IOException, FileNotFoundException, DocumentException {
+
         Context context = new Context();
         context.setVariable("nama", nama);
         context.setVariable("tglHabis", tglHabis);
-        
+
         final String pdfFilePath = "kartu-member.pdf";
-        try {
-            cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException | IOException ex) {
-            Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);
     }
-}

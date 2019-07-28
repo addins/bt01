@@ -424,7 +424,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 .withTglDaftar(tglDaftar)
                 .withTglHabis(tglHabis)
                 .withBayar(bayar);
-        
+
         member.setId(id);
 
         saving = true;
@@ -540,24 +540,51 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        
+
         if (selectedMemberId != null) {
             editSelectedMember();
         }
-        
+
         String nama = txtfNama.getText();
         Instant instant = ofNullable(datcTglHabis.getDate())
                 .map(Date::toInstant)
                 .orElse(Instant.EPOCH);
         ZonedDateTime ofInstant = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
         String tglHabis = ofInstant.format(DateTimeFormatter.ISO_DATE);
-        
+
         if (nama.isBlank() || tglHabis.isBlank()) {
             showMessageDialog(rootPane, "Pilih member untuk print");
         }
-        
-        memberController.cetakKartuMemberPdf(nama, tglHabis);
-        
+
+        new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                try {
+                    memberController.cetakKartuMemberPdf(nama, tglHabis);
+                    return true;
+                } catch (Exception e) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, e);
+                }
+                return false;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Boolean success = get();
+                    if (success) {
+                        showMessageDialog(rootPane, "Cetak sukses");
+                    } else {
+                        showMessageDialog(rootPane, "Cetak gagal");
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(FormRegisterMember.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.execute();
+
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -586,8 +613,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
                 || nama == null || nama.isEmpty()
                 || alamat == null || alamat.isEmpty()
                 || tglDaftar == null || tglHabis == null
-                || bayar == null || bayar.isEmpty()
-        ) {
+                || bayar == null || bayar.isEmpty()) {
             showAlert();
             return;
         }
@@ -610,7 +636,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
             protected RegisMember doInBackground() throws Exception {
                 return memberController.findOne(selectedMemberId);
             }
-            
+
             @Override
             protected void done() {
                 try {
