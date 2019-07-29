@@ -5,6 +5,7 @@ import org.addin.learns.bt01.utils.impl.CetakPdfThymeleafEngine;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
@@ -21,6 +22,7 @@ public class CetakPdfConfig {
         
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
+        templateEngine.addDialect(new Java8TimeDialect());
         return templateEngine;
     }
     

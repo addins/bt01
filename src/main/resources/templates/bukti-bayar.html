@@ -16,38 +16,49 @@
                 <tr>
                     <td>Tanggal</td>
                     <td>:</td>
-                    <td><span th:text="${vm.booking.tglSewa}">321312312</span></td>
-                </tr>
-<!--                <tr>
-                    <td>No. Booking</td>
-                    <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
+                    <td><span th:text="${#temporals.format(vm.booking.tglSewa, 'yyyy-MM-dd')}">321312312</span></td>
                 </tr>
                 <tr>
-                    <td>No. Booking</td>
+                    <td>Status Member</td>
                     <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
+                    <td><span th:text="${vm.booking.member == null} ? 'Tidak' : 'Ya'">321312312</span></td>
+                </tr>
+                <tr th:if="${vm.booking.member != null}">
+                    <td>Kode Member</td>
+                    <td>:</td>
+                    <td><span th:text="${vm.booking.member == null} ? '-' : ${vm.booking.member.kode}">321312312</span></td>
                 </tr>
                 <tr>
-                    <td>No. Booking</td>
+                    <td>Nama</td>
                     <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
+                    <td>
+                        <span th:text="${vm.booking.member == null} ? ${vm.booking.namaPenyewa} : ${vm.booking.member.nama}">321312312</span>
+                    </td>
                 </tr>
                 <tr>
-                    <td>No. Booking</td>
+                    <td>Kode Lapangan</td>
                     <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
+                    <td><span th:text="${vm.booking.kodeLapangan}">321312312</span></td>
                 </tr>
                 <tr>
-                    <td>No. Booking</td>
+                    <td>Jam</td>
                     <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
+                    <td>
+                        <span th:text="${vm.booking.jamMulai}">321312312</span>
+                        -
+                        <span th:text="${vm.booking.jamSelesai}">321312312</span>
+                    </td>
                 </tr>
                 <tr>
-                    <td>No. Booking</td>
+                    <td>Total</td>
                     <td>:</td>
-                    <td><span th:text="${vm.noBooking}">321312312</span></td>
-                </tr>-->
+                    <td><span th:text="${vm.booking.dp + vm.harusBayar}">321312312</span></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td>:</td>
+                    <td><span th:text="${vm.booking.statusPembayaran}">321312312</span></td>
+                </tr>
             </tbody>
         </table>
     </body>

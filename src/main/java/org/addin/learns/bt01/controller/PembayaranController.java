@@ -25,6 +25,8 @@ import org.addin.learns.bt01.repository.BookingRepository;
 import org.addin.learns.bt01.repository.LapanganRepository;
 import org.addin.learns.bt01.repository.PembayaranRepository;
 import org.addin.learns.bt01.ui.FormRegisterMember;
+import org.addin.learns.bt01.utils.CetakPdfService;
+import static org.addin.learns.bt01.utils.CetakPdfService.buktiBayar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +57,9 @@ public class PembayaranController {
     @Autowired
     private LapanganRepository lapanganRepository;
     
+    @Autowired
+    private CetakPdfService cetakPdfService;
+    
     public Page<Lapangan> findAllLapangan(Pageable pageable) {
         return lapanganRepository.findAll(pageable);
     }
@@ -62,6 +67,12 @@ public class PembayaranController {
     public Booking getOneById(Long id) {
         Booking one = bookingRepository.getOne(id);
         one.getMember();
+        return one;
+    }
+    
+    public Pembayaran getPembayaranById(Long id) {
+        Pembayaran one = pembayaranRepository.getOne(id);
+        one.getBooking().getMember();
         return one;
     }
     
@@ -128,10 +139,12 @@ public class PembayaranController {
         return pembayaranRepository.findAllByBookingTglSewaBetween(startFrom, startTo, unpaged);
     }
 
-    public void cetakBuktiBayar(String noTransaksi) {
+    public void cetakBuktiBayar(String noTransaksi) throws DocumentException, IOException {
         Pembayaran bayaran = pembayaranRepository.findOneByNoTransaksi(noTransaksi);
         if (bayaran != null) {
-            throw new UnsupportedOperationException("not yet implemented");
+            Context context = new Context();
+            context.setVariable("vm", bayaran);
+            cetakPdfService.renderToFile(buktiBayar, context, "bukti-bayar.pdf");
         }
     }
 

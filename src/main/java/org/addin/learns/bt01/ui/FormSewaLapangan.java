@@ -5,6 +5,8 @@
  */
 package org.addin.learns.bt01.ui;
 
+import com.itextpdf.text.DocumentException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +26,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -47,15 +51,17 @@ import org.springframework.stereotype.Component;
 public class FormSewaLapangan extends javax.swing.JFrame {
 
     private static final String COMB_SILAHKAN_PILIH_STR = "-- silahkan pilih --";
-    
+
     @Autowired
     private MenuUtama menuUtama;
 
     @Autowired
     private PembayaranController controller;
-    
+
     private Booking selectedBooking;
-    
+
+    private Pembayaran selectedPembayaran;
+
     private Boolean saving = false;
 
     /**
@@ -64,8 +70,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     public FormSewaLapangan() {
         initComponents();
         addSelectionListenerForTableBooking();
+        addSelectionListenerForTablePembayaran();
     }
-    
+
     private void addSelectionListenerForTableBooking() {
         ListSelectionModel selectionModel = tableBooking.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
@@ -92,7 +99,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                                     Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
-                            
+
                         }.execute();
                     }
                 } else {
@@ -101,7 +108,44 @@ public class FormSewaLapangan extends javax.swing.JFrame {
             }
         });
     }
-    
+
+    private void addSelectionListenerForTablePembayaran() {
+        ListSelectionModel selectionModel = tablePembayaran.getSelectionModel();
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = tablePembayaran.getSelectedRow();
+                final TableModel tableModel = tablePembayaran.getModel();
+                if (selectedRow > -1 && tableModel.getRowCount() > 0) {
+                    Long selectedPembayaranId = (Long) tableModel.getValueAt(selectedRow, 0);
+                    if (selectedPembayaranId != null) {
+                        new SwingWorker<Pembayaran, Void>() {
+                            @Override
+                            protected Pembayaran doInBackground() throws Exception {
+                                return controller.getPembayaranById(selectedPembayaranId);
+                            }
+
+                            @Override
+                            protected void done() {
+                                try {
+                                    Pembayaran pembayaran = get();
+                                    selectedPembayaran = pembayaran;
+                                    btnPrintSelected.setEnabled(true);
+                                } catch (InterruptedException | ExecutionException ex) {
+                                    Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+
+                        }.execute();
+                    }
+                } else {
+                    selectedPembayaran = null;
+                    btnPrintSelected.setEnabled(false);
+                }
+            }
+        });
+    }
+
     private void setFieldsWith(Booking book) {
         BigDecimal bookingFee = selectedBooking.getDp();
         AtomicLong durationInMinutes = new AtomicLong();
@@ -120,7 +164,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
         BigDecimal jumlahTagihan = tarifPerMenit.multiply(BigDecimal.valueOf(durationInMinutes.longValue())).subtract(bookingFee);
 
-        if(member != null) {
+        if (member != null) {
             jumlahTagihan = jumlahTagihan.subtract(potonganMember);
         }
 
@@ -163,7 +207,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         txtfStatusPembayaran = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         txtfHarusDibayar = new javax.swing.JTextField();
-        btnPrint = new javax.swing.JButton();
+        btnSaveAndPrint = new javax.swing.JButton();
         btnSimpan = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtfNoTransaksi = new javax.swing.JTextField();
@@ -183,6 +227,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         combKodeLapBookingFilter = new javax.swing.JComboBox<>();
         jLabel20 = new javax.swing.JLabel();
         combKodeLapBayaranFilter = new javax.swing.JComboBox<>();
+        btnPrintSelected = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -244,10 +289,10 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
         txtfHarusDibayar.setEditable(false);
 
-        btnPrint.setText("Print");
-        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+        btnSaveAndPrint.setText("Simpan & Print");
+        btnSaveAndPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrintActionPerformed(evt);
+                btnSaveAndPrintActionPerformed(evt);
             }
         });
 
@@ -301,9 +346,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                             .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(43, 43, 43)
+                                .addGap(3, 3, 3)
+                                .addComponent(btnSaveAndPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -328,9 +373,6 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                                     .addComponent(txtfNoTransaksi))))
                         .addGap(0, 43, Short.MAX_VALUE))))
         );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnPrint, btnReset});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -379,12 +421,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSaveAndPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnReset))
                 .addGap(33, 33, 33))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnPrint, btnReset});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnReset, btnSaveAndPrint});
 
         tableBooking.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -457,6 +499,14 @@ public class FormSewaLapangan extends javax.swing.JFrame {
             }
         });
 
+        btnPrintSelected.setText("Print");
+        btnPrintSelected.setEnabled(false);
+        btnPrintSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintSelectedActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -468,9 +518,6 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(45, 45, 45)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -483,8 +530,13 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(combKodeLapBayaranFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(txtfCariPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap(19, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnPrintSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(32, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -540,8 +592,10 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrintSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         pack();
@@ -561,7 +615,6 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         String noTransaksi = txtfNoTransaksi.getText();
         String harusDibayar = txtfHarusDibayar.getText();
-//        String statusBayar = txtfStatusPembayaran.getText();
         String statusBayar = "LUNAS";
         saveNewPembayaran(selectedBooking, noTransaksi, harusDibayar, statusBayar);
     }//GEN-LAST:event_btnSimpanActionPerformed
@@ -578,11 +631,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         refreshPembayaranList();
     }//GEN-LAST:event_txtfCariPembayaranKeyTyped
 
-    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+    private void btnSaveAndPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveAndPrintActionPerformed
         String noTransaksi = txtfNoTransaksi.getText();
-        btnSimpanActionPerformed(evt);
-        controller.cetakBuktiBayar(noTransaksi);
-    }//GEN-LAST:event_btnPrintActionPerformed
+        String harusDibayar = txtfHarusDibayar.getText();
+        String statusBayar = "LUNAS";
+        saveNewAndCetakBuktiBayar(selectedBooking, noTransaksi, harusDibayar, statusBayar);
+    }//GEN-LAST:event_btnSaveAndPrintActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         clearForm();
@@ -599,10 +653,43 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         refreshPembayaranList();
     }//GEN-LAST:event_combKodeLapBayaranFilterItemStateChanged
 
+    private void btnPrintSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintSelectedActionPerformed
+        if (selectedPembayaran != null) {
+            new SwingWorker<Boolean, Object>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    try {
+                        controller.cetakBuktiBayar(selectedPembayaran.getNoTransaksi());
+                        return true;
+                    } catch (DocumentException | IOException ex) {
+                        Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    return false;
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        Boolean result = get();
+                        if (result) {
+                            showMessageDialog(rootPane, "Cetak sukses");
+                        } else {
+                            showMessageDialog(rootPane, "Cetak gagal", "Cetak Gagal", ERROR_MESSAGE);
+                        }
+                    } catch (InterruptedException | ExecutionException ex) {
+                        showMessageDialog(rootPane, "Cetak gagal", "Cetak Gagal", ERROR_MESSAGE);
+                        Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }.execute();
+        }
+    }//GEN-LAST:event_btnPrintSelectedActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
-    private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnPrintSelected;
     private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnSaveAndPrint;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JComboBox<String> combKodeLapBayaranFilter;
     private javax.swing.JComboBox<String> combKodeLapBookingFilter;
@@ -658,7 +745,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         txtfTgl.setText("");
         refreshNextNoTransaksi();
     }
-    
+
     private void refreshLapanganList() {
         new SwingWorker<Page<Lapangan>, Void>() {
             @Override
@@ -677,12 +764,12 @@ public class FormSewaLapangan extends javax.swing.JFrame {
             }
         }.execute();
     }
-    
+
     private void updateComboboxModel(Page<Lapangan> lapangans) {
         combKodeLapBookingFilter.setModel(createComboBoxModelFor(lapangans));
         combKodeLapBayaranFilter.setModel(createComboBoxModelFor(lapangans));
     }
-    
+
     private ComboBoxModel<String> createComboBoxModelFor(Page<Lapangan> lapangans) {
         final List<String> collect = lapangans.getContent().stream().map(Lapangan::getKode)
                 .collect(Collectors.toList());
@@ -695,7 +782,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         return kodeLapangan != null && !kodeLapangan.isBlank()
                 && !kodeLapangan.equals(COMB_SILAHKAN_PILIH_STR);
     }
-    
+
     private void refreshBookingList() {
 
         String keyword = txtfCariBooking.getText();
@@ -707,7 +794,7 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilter)) {
                     return controller.findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran("%" + keyword + "%", kodeLapanganFilter, "BELUM_LUNAS", Pageable.unpaged());
                 } else if (stringIsNotBlank(keyword)) {
-                    return controller.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", BELUM_LUNAS,  Pageable.unpaged());
+                    return controller.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", BELUM_LUNAS, Pageable.unpaged());
                 } else if (kodeLapanganFilterIsSet(kodeLapanganFilter)) {
                     return controller.findAllBookingByKodeLapanganAndStatusPembayaran(kodeLapanganFilter, BELUM_LUNAS, Pageable.unpaged());
                 }
@@ -821,7 +908,40 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                     Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
+        }.execute();
+    }
+
+    private void saveNewAndCetakBuktiBayar(Booking selectedBooking, String noTransaksi, String harusDibayar, String statusBayar) {
+        selectedBooking.setStatusPembayaran(statusBayar);
+        Pembayaran bayaran = new Pembayaran()
+                .withBooking(selectedBooking)
+                .withNoTransaksi(noTransaksi)
+                .withHarusBayar(fromStringToBigDec(harusDibayar));
+        saving = true;
+        btnSimpan.setEnabled(false);
+        new SwingWorker<Pembayaran, Void>() {
+            @Override
+            protected Pembayaran doInBackground() throws Exception {
+                return controller.save(bayaran, selectedBooking);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Pembayaran pembayaran = get();
+                    clearForm();
+                    refreshBookingList();
+                    refreshPembayaranList();
+                    controller.cetakBuktiBayar(pembayaran.getNoTransaksi());
+                    showMessageDialog(rootPane, "Cetak sukses");
+                    saving = false;
+                    btnSimpan.setEnabled(true);
+                } catch (InterruptedException | ExecutionException | DocumentException | IOException ex) {
+                    showMessageDialog(rootPane, "Simpan dan Cetak gagal", "Simpan dan Cetak Gagal", ERROR_MESSAGE);
+                    Logger.getLogger(FormSewaLapangan.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }.execute();
     }
 }
