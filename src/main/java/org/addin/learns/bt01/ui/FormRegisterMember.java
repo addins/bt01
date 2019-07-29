@@ -18,6 +18,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.AbstractDocument;
 import org.addin.learns.bt01.controller.RegisMemberController;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,16 @@ public class FormRegisterMember extends javax.swing.JFrame {
      */
     public FormRegisterMember() {
         initComponents();
+        addDocumentFilters();
         addSelectionListenerForTable();
+    }
+    
+    private void addDocumentFilters() {
+        ((AbstractDocument)txtfNoKtp.getDocument()).setDocumentFilter(new LimitDocumentFilter(17));
+        ((AbstractDocument)txtfNama.getDocument()).setDocumentFilter(new LimitDocumentFilter(25));
+        ((AbstractDocument)txtfAlamat.getDocument()).setDocumentFilter(new LimitDocumentFilter(35));
+        ((AbstractDocument)txtfNoTelp.getDocument()).setDocumentFilter(new NumberLimitDocumentFilter(12));
+        ((AbstractDocument)txtfBayar.getDocument()).setDocumentFilter(new NumberLimitDocumentFilter(20));
     }
 
     private void addSelectionListenerForTable() {
