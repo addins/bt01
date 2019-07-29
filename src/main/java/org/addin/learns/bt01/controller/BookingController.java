@@ -77,7 +77,7 @@ public class BookingController {
     }
 
     public Page<Booking> findAllBookingByKodeLapanganAndStatusPembayaran(String kodeLapangan, String statusPembayaran, Pageable pageable) {
-        return bookingRepository.findAllByKodeLapanganEquals(kodeLapangan, statusPembayaran, pageable);
+        return bookingRepository.findAllByKodeLapanganEqualsAndStatusPembayaran(kodeLapangan, statusPembayaran, pageable);
     }
 
     public Page<Booking> findAllBookingByStatusPembayaran(String statusPembayaran, Pageable unpaged) {

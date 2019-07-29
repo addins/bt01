@@ -19,8 +19,10 @@ import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.Booking;
+import org.addin.learns.bt01.domain.Lapangan;
 import org.addin.learns.bt01.domain.Pembayaran;
 import org.addin.learns.bt01.repository.BookingRepository;
+import org.addin.learns.bt01.repository.LapanganRepository;
 import org.addin.learns.bt01.repository.PembayaranRepository;
 import org.addin.learns.bt01.ui.FormRegisterMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,13 @@ public class PembayaranController {
     @Autowired
     private BookingRepository bookingRepository;
     
+    @Autowired
+    private LapanganRepository lapanganRepository;
+    
+    public Page<Lapangan> findAllLapangan(Pageable pageable) {
+        return lapanganRepository.findAll(pageable);
+    }
+    
     public Booking getOneById(Long id) {
         Booking one = bookingRepository.getOne(id);
         one.getMember();
@@ -74,6 +83,10 @@ public class PembayaranController {
 
     public Page<Pembayaran> findAllPembayaranByNoTransaksi(String noTransaksi, Pageable page) {
         return pembayaranRepository.findAllByNoTransaksiLike(noTransaksi, page);
+    }
+
+    public Page<Pembayaran> findAllPembayaranByNoTransaksiAndKodeLapangan(String noTransaksi, String kodeLapangan, Pageable page) {
+        return pembayaranRepository.findAllByNoTransaksiLikeAndBookingKodeLapangan(noTransaksi, kodeLapangan, page);
     }
 
     public Page<Pembayaran> findAllPembayaran(Pageable page) {
@@ -120,5 +133,17 @@ public class PembayaranController {
         if (bayaran != null) {
             throw new UnsupportedOperationException("not yet implemented");
         }
+    }
+
+    public Page<Booking> findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran(String noBooking, String kodeLapanganFilter, String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByNoBookingLikeAndKodeLapanganEqualsAndStatusPembayaran(noBooking, kodeLapanganFilter, statusPembayaran, pageable);
+    }
+
+    public Page<Booking> findAllBookingByKodeLapanganAndStatusPembayaran(String kodeLapanganFilter, String statusPembayaran, Pageable pageable) {
+        return bookingRepository.findAllByKodeLapanganEqualsAndStatusPembayaran(kodeLapanganFilter, statusPembayaran, pageable);
+    }
+
+    public Page<Pembayaran> findAllPembayaranByKodeLapangan(String kodeLapangan, Pageable pageable) {
+        return pembayaranRepository.findAllByBookingKodeLapangan(kodeLapangan, pageable);
     }
 }

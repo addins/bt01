@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
+import java.util.List;
 
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
@@ -20,6 +21,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -27,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import org.addin.learns.bt01.controller.PembayaranController;
 import org.addin.learns.bt01.domain.Booking;
+import org.addin.learns.bt01.domain.Lapangan;
 import org.addin.learns.bt01.domain.Pembayaran;
 import org.addin.learns.bt01.domain.RegisMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +46,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class FormSewaLapangan extends javax.swing.JFrame {
 
+    private static final String COMB_SILAHKAN_PILIH_STR = "-- silahkan pilih --";
+    
     @Autowired
     private MenuUtama menuUtama;
 
@@ -172,6 +179,10 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         tablePembayaran = new javax.swing.JTable();
         jLabel16 = new javax.swing.JLabel();
         txtfCariPembayaran = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        combKodeLapBookingFilter = new javax.swing.JComboBox<>();
+        jLabel20 = new javax.swing.JLabel();
+        combKodeLapBayaranFilter = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -428,6 +439,24 @@ public class FormSewaLapangan extends javax.swing.JFrame {
             }
         });
 
+        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel19.setText("Kode Lapangan");
+
+        combKodeLapBookingFilter.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combKodeLapBookingFilterItemStateChanged(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel20.setText("Kode Lapangan");
+
+        combKodeLapBayaranFilter.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combKodeLapBayaranFilterItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -437,29 +466,47 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtfCariBooking, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(342, 342, 342)
-                        .addComponent(jLabel8))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(318, 318, 318)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(45, 45, 45)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtfCariPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel20))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(combKodeLapBayaranFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtfCariPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap(19, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(342, 342, 342)
+                                .addComponent(jLabel8))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(318, 318, 318)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel19))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtfCariBooking, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                    .addComponent(combKodeLapBookingFilter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap())))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {combKodeLapBayaranFilter, txtfCariPembayaran});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -471,7 +518,11 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfCariBooking, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(34, 34, 34)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(combKodeLapBookingFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel19))
+                        .addGap(7, 7, 7)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(60, 60, 60)
                         .addComponent(jLabel8)
@@ -479,14 +530,18 @@ public class FormSewaLapangan extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtfCariPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(27, 27, 27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(combKodeLapBayaranFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel20))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -531,15 +586,26 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         clearForm();
+        refreshLapanganList();
         refreshBookingList();
         refreshPembayaranList();
     }//GEN-LAST:event_formWindowActivated
+
+    private void combKodeLapBookingFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combKodeLapBookingFilterItemStateChanged
+        refreshBookingList();
+    }//GEN-LAST:event_combKodeLapBookingFilterItemStateChanged
+
+    private void combKodeLapBayaranFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combKodeLapBayaranFilterItemStateChanged
+        refreshPembayaranList();
+    }//GEN-LAST:event_combKodeLapBayaranFilterItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnKembali;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<String> combKodeLapBayaranFilter;
+    private javax.swing.JComboBox<String> combKodeLapBookingFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -548,7 +614,9 @@ public class FormSewaLapangan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -591,15 +659,57 @@ public class FormSewaLapangan extends javax.swing.JFrame {
         refreshNextNoTransaksi();
     }
     
+    private void refreshLapanganList() {
+        new SwingWorker<Page<Lapangan>, Void>() {
+            @Override
+            protected Page<Lapangan> doInBackground() throws Exception {
+                return controller.findAllLapangan(Pageable.unpaged());
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Page<Lapangan> lapangans = get();
+                    updateComboboxModel(lapangans);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.execute();
+    }
+    
+    private void updateComboboxModel(Page<Lapangan> lapangans) {
+        combKodeLapBookingFilter.setModel(createComboBoxModelFor(lapangans));
+        combKodeLapBayaranFilter.setModel(createComboBoxModelFor(lapangans));
+    }
+    
+    private ComboBoxModel<String> createComboBoxModelFor(Page<Lapangan> lapangans) {
+        final List<String> collect = lapangans.getContent().stream().map(Lapangan::getKode)
+                .collect(Collectors.toList());
+        collect.add(0, COMB_SILAHKAN_PILIH_STR);
+        ComboBoxModel<String> model = new DefaultComboBoxModel<>(collect.toArray(new String[]{}));
+        return model;
+    }
+
+    private boolean kodeLapanganFilterIsSet(String kodeLapangan) {
+        return kodeLapangan != null && !kodeLapangan.isBlank()
+                && !kodeLapangan.equals(COMB_SILAHKAN_PILIH_STR);
+    }
+    
     private void refreshBookingList() {
 
         String keyword = txtfCariBooking.getText();
+        String kodeLapanganFilter = (String) combKodeLapBookingFilter.getSelectedItem();
 
         new SwingWorker<Page<Booking>, Void>() {
             @Override
             protected Page<Booking> doInBackground() throws Exception {
-                if (stringIsNotBlank(keyword)) {
+                if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapanganFilter)) {
+                    return controller.findAllBookingByNoBookingAndKodeLapanganAndStatusPembayaran("%" + keyword + "%", kodeLapanganFilter, "BELUM_LUNAS", Pageable.unpaged());
+                } else if (stringIsNotBlank(keyword)) {
                     return controller.findAllBookingByNoBookingAndStatusPembayaran("%" + keyword + "%", BELUM_LUNAS,  Pageable.unpaged());
+                } else if (kodeLapanganFilterIsSet(kodeLapanganFilter)) {
+                    return controller.findAllBookingByKodeLapanganAndStatusPembayaran(kodeLapanganFilter, BELUM_LUNAS, Pageable.unpaged());
                 }
                 return controller.findAllBookingByStatusPembayaran(BELUM_LUNAS, Pageable.unpaged());
             }
@@ -627,12 +737,17 @@ public class FormSewaLapangan extends javax.swing.JFrame {
 
     private void refreshPembayaranList() {
         String keyword = txtfCariPembayaran.getText();
+        String kodeLapangan = (String) combKodeLapBayaranFilter.getSelectedItem();
 
         new SwingWorker<Page<Pembayaran>, Void>() {
             @Override
             protected Page<Pembayaran> doInBackground() throws Exception {
-                if (stringIsNotBlank(keyword)) {
+                if (stringIsNotBlank(keyword) && kodeLapanganFilterIsSet(kodeLapangan)) {
+                    return controller.findAllPembayaranByNoTransaksiAndKodeLapangan(keyword, kodeLapangan, Pageable.unpaged());
+                } else if (stringIsNotBlank(keyword)) {
                     return controller.findAllPembayaranByNoTransaksi("%" + keyword + "%", Pageable.unpaged());
+                } else if (kodeLapanganFilterIsSet(kodeLapangan)) {
+                    return controller.findAllPembayaranByKodeLapangan(kodeLapangan, Pageable.unpaged());
                 }
                 return controller.findAllPembayaran(Pageable.unpaged());
             }

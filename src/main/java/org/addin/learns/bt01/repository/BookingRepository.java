@@ -34,5 +34,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 
     public Page<Booking> findAllByNoBookingLike(String noBooking, String statusPembayaran, Pageable pageable);
 
-    public Page<Booking> findAllByKodeLapanganEquals(String kodeLapangan, String statusPembayaran, Pageable pageable);
+    public Page<Booking> findAllByKodeLapanganEqualsAndStatusPembayaran(String kodeLapangan, String statusPembayaran, Pageable pageable);
 }

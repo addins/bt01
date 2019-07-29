@@ -27,4 +27,8 @@ public interface PembayaranRepository extends JpaRepository<Pembayaran, Long>{
     public Page<Pembayaran> findAllByBookingTglSewaBetween(ZonedDateTime dateFrom, ZonedDateTime dateTo, Pageable unpaged);
 
     public Pembayaran findOneByNoTransaksi(String noTransaksi);
+
+    public Page<Pembayaran> findAllByNoTransaksiLikeAndBookingKodeLapangan(String noTransaksi, String kodeLapangan, Pageable page);
+
+    public Page<Pembayaran> findAllByBookingKodeLapangan(String kodeLapangan, Pageable pageable);
 }
