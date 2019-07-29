@@ -5,12 +5,14 @@
  */
 package org.addin.learns.bt01.ui;
 
+import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
+import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -23,9 +25,11 @@ import java.util.stream.Collectors;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.text.AbstractDocument;
 import org.addin.learns.bt01.controller.BookingController;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Lapangan;
@@ -64,8 +68,13 @@ public class FormBooking extends javax.swing.JFrame {
      */
     public FormBooking() {
         initComponents();
+        addDocumentFilters();
         groupIsMemberRadioButtons();
         setinitialRadbMemberValue();
+    }
+    
+    private void addDocumentFilters() {
+        ((AbstractDocument)txtfNamaPenyewa.getDocument()).setDocumentFilter(new LimitDocumentFilter(25));
     }
 
     private void setinitialRadbMemberValue() {
@@ -449,10 +458,36 @@ public class FormBooking extends javax.swing.JFrame {
 
         String dp = txtfDp.getText();
         String statusPembayaran = txtfStatusPembayaran.getText();
+        
+        if (!isValueValid(namaPenyewa, selectedKodeLapangan, tglSewa)) return;
 
         saveNewBooking(noBooking, tglSewa, namaPenyewa, selectedKodeLapangan,
                 jamMulaiHour, jamMulaiMin, jamSelesaiHour, jamSelesaiMin, dp, statusPembayaran, selectedMemberId);
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private boolean isValueValid(String namaPenyewa, String selectedKodeLapangan, ZonedDateTime tglSewa) throws HeadlessException {
+        if (tglSewa == null || tglSewa.isBefore(ZonedDateTime.now().minusDays(1L))) {
+            showMessageDialog(rootPane, "Harap mengisi tanggal sewa");
+            return false;
+        }
+        if (radbMemberYa.isSelected()) {
+            if (selectedMemberId == null) {
+                showMessageDialog(rootPane, "Harap memilih member");
+                return false;
+            }
+        }
+        if (radbMemberTidak.isSelected()) {
+            if (namaPenyewa.isBlank()) {
+                showMessageDialog(rootPane, "Harap mengisi nama penyewa");
+                return false;
+            }
+        }
+        if (!kodeLapanganFilterIsSet(selectedKodeLapangan)) {
+            showMessageDialog(rootPane, "Harap memilih lapangan");
+            return false;
+        }
+        return true;
+    }
 
     private void saveNewBooking(String noBooking, ZonedDateTime tglSewa, String namaPenyewa,
             String selectedKodeLapangan, Integer jamMulaiHour, Integer jamMulaiMin,
