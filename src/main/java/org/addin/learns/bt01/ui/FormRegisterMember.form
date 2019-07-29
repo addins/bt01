@@ -257,6 +257,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtfKode">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>

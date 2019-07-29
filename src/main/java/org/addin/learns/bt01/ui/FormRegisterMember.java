@@ -1,24 +1,13 @@
 package org.addin.learns.bt01.ui;
 
-import com.itextpdf.text.DocumentException;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
 
 import static javax.swing.JOptionPane.*;
 import static javax.swing.JOptionPane.YES_OPTION;
@@ -35,10 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -157,6 +142,8 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel4.setText("Alamat");
+
+        txtfKode.setEditable(false);
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setText("No Telepon");
@@ -422,7 +409,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKembaliActionPerformed
 
     public void clearMemberForm() {
-        txtfKode.setText("");
+        refreshNextKodeMember();
         txtfNoKtp.setText("");
         txtfNama.setText("");
         txtfAlamat.setText("");
@@ -460,6 +447,7 @@ public class FormRegisterMember extends javax.swing.JFrame {
             @Override
             protected void done() {
                 refreshMemberList();
+                clearMemberForm();
                 saving = false;
                 btnSimpan.setEnabled(true);
             }
@@ -626,7 +614,6 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
         if (!saving) {
             createAndSaveMember(selectedMemberId, kode, noKtp, nama, alamat, noTelp, tglDaftar, tglHabis, bayar);
-            clearMemberForm();
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -672,6 +659,29 @@ public class FormRegisterMember extends javax.swing.JFrame {
         datcTglHabis.setDate(Date.from(member.getTglHabis().toInstant()));
         txtfBayar.setText(member.getBayar());
     }
+    
+    private void refreshNextKodeMember() {
+        btnSimpan.setEnabled(false);
+        new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return memberController.findNextKodeMember();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    String nextKodeMember = get();
+                    txtfKode.setText(nextKodeMember);
+                    btnSimpan.setEnabled(true);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(FormBooking.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }.execute();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;

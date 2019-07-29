@@ -97,3 +97,11 @@ public class RegisMemberController {
         final String pdfFilePath = "kartu-member.pdf";
         cetakPdfService.renderToFile(CetakPdfService.kartuMember, context, pdfFilePath);
     }
+
+    public String findNextKodeMember() {
+        String kode = "MEM-";
+        Long maxId = memberRepository.getMaxId();
+        kode += String.format("%03d", maxId + 1);
+        return kode;
+    }
+}
