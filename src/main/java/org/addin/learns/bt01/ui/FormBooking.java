@@ -7,6 +7,8 @@ package org.addin.learns.bt01.ui;
 
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -65,6 +67,22 @@ public class FormBooking extends javax.swing.JFrame {
         addDocumentFilters();
         groupIsMemberRadioButtons();
         setInitialRadbMemberValue();
+
+        txtfNamaPenyewa.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                txtfDp.setText("20000");
+                txtfStatusPembayaran.setText("BELUM_LUNAS");
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
     }
 
     private void addDocumentFilters() {
