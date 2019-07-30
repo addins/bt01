@@ -467,7 +467,7 @@ public class FormBooking extends javax.swing.JFrame {
 
     private boolean isValueValid(String namaPenyewa, String selectedKodeLapangan, ZonedDateTime tglSewa) throws HeadlessException {
         if (tglSewa == null || tglSewa.isBefore(ZonedDateTime.now().minusDays(1L))) {
-            showMessageDialog(rootPane, "Harap mengisi tanggal sewa");
+            showMessageDialog(rootPane, "Harap mengisi tanggal sewa, minimal tanggal hari ini");
             return false;
         }
         if (radbMemberYa.isSelected()) {
