@@ -8,6 +8,7 @@ package org.addin.learns.bt01.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Lapangan;
+import org.addin.learns.bt01.domain.RegisMember;
 import org.addin.learns.bt01.repository.BookingRepository;
 import org.addin.learns.bt01.repository.LapanganRepository;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
@@ -44,6 +45,10 @@ public class BookingController {
     }
      
     public Booking save(Booking booking) {
+        if (booking.getMember() != null && booking.getMember().getId() != null) {
+            RegisMember one = memberRepository.getOne(booking.getMember().getId());
+            booking.setNamaPenyewa(one.getNama());
+        }
         return bookingRepository.save(booking);
     }
 

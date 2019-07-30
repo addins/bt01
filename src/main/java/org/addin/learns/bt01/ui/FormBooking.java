@@ -12,11 +12,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.time.ZonedDateTime.ofInstant;
-import java.time.chrono.ChronoZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -24,17 +21,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.SwingWorker;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.AbstractDocument;
 import org.addin.learns.bt01.controller.BookingController;
 import org.addin.learns.bt01.domain.Booking;
 import org.addin.learns.bt01.domain.Lapangan;
 import org.addin.learns.bt01.domain.RegisMember;
-import org.addin.learns.bt01.repository.BookingRepository;
 import org.addin.learns.bt01.repository.RegisMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -70,14 +64,14 @@ public class FormBooking extends javax.swing.JFrame {
         initComponents();
         addDocumentFilters();
         groupIsMemberRadioButtons();
-        setinitialRadbMemberValue();
-    }
-    
-    private void addDocumentFilters() {
-        ((AbstractDocument)txtfNamaPenyewa.getDocument()).setDocumentFilter(new LimitDocumentFilter(25));
+        setInitialRadbMemberValue();
     }
 
-    private void setinitialRadbMemberValue() {
+    private void addDocumentFilters() {
+        ((AbstractDocument) txtfNamaPenyewa.getDocument()).setDocumentFilter(new LimitDocumentFilter(25));
+    }
+
+    private void setInitialRadbMemberValue() {
         radbMemberTidak.setSelected(true);
     }
 
@@ -458,8 +452,10 @@ public class FormBooking extends javax.swing.JFrame {
 
         String dp = txtfDp.getText();
         String statusPembayaran = txtfStatusPembayaran.getText();
-        
-        if (!isValueValid(namaPenyewa, selectedKodeLapangan, tglSewa)) return;
+
+        if (!isValueValid(namaPenyewa, selectedKodeLapangan, tglSewa)) {
+            return;
+        }
 
         saveNewBooking(noBooking, tglSewa, namaPenyewa, selectedKodeLapangan,
                 jamMulaiHour, jamMulaiMin, jamSelesaiHour, jamSelesaiMin, dp, statusPembayaran, selectedMemberId);
@@ -535,7 +531,7 @@ public class FormBooking extends javax.swing.JFrame {
         refreshNextNoBooking();
         txtfNoBooking.setText("");// todo
         datcTglSewa.setDate(null);
-        txtfNamaPenyewa.setText("");
+        txtfNamaPenyewa.setText(" ");
         combKodeLapangan.setSelectedIndex(0);
         spinJamMulai.setValue(0);
         spinMinMulai.setValue(0);
@@ -559,6 +555,13 @@ public class FormBooking extends javax.swing.JFrame {
     }
 
     private void radbMemberTidakItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radbMemberTidakItemStateChanged
+        txtfNamaPenyewa.setText(" ");
+        selectedMemberId = null;
+        txtfKodeMember.setText("");
+        txtfNamaMember.setText("");
+        txtfTglHabis.setText("");
+        txtfDp.setText("20000");
+        txtfStatusPembayaran.setText("BELUM_LUNAS");
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             disableMemberInput();
             enableNonMemberInput();
