@@ -56,7 +56,6 @@ public class FormLaporan extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnApplyFilter = new javax.swing.JButton();
-        btnPrint = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(647, 540));
@@ -96,13 +95,6 @@ public class FormLaporan extends javax.swing.JFrame {
             }
         });
 
-        btnPrint.setText("Print");
-        btnPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrintActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -123,8 +115,6 @@ public class FormLaporan extends javax.swing.JFrame {
                         .addComponent(btnApplyFilter))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(jButton6)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
@@ -149,9 +139,7 @@ public class FormLaporan extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6)
-                    .addComponent(btnPrint))
+                .addComponent(jButton6)
                 .addContainerGap())
         );
 
@@ -174,13 +162,8 @@ public class FormLaporan extends javax.swing.JFrame {
         
     }//GEN-LAST:event_formWindowOpened
 
-    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnPrintActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApplyFilter;
-    private javax.swing.JButton btnPrint;
     private com.toedter.calendar.JDateChooser datcDateFrom;
     private com.toedter.calendar.JDateChooser datcDateTo;
     private javax.swing.JButton jButton6;
