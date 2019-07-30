@@ -420,9 +420,9 @@ public class FormRegisterMember extends javax.swing.JFrame {
 
     public void clearMemberForm() {
         refreshNextKodeMember();
-        txtfNoKtp.setText("");
-        txtfNama.setText("");
-        txtfAlamat.setText("");
+        txtfNoKtp.setText(" ");
+        txtfNama.setText(" ");
+        txtfAlamat.setText(" ");
         txtfNoTelp.setText("");
         txtfBayar.setText("");
         datcTglDaftar.setCalendar(null);
